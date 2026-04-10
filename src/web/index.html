@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoBank — Bankowość Internetowa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     LOGIN PAGE
+══════════════════════════════ -->
+<div id="page-login" class="auth-page active">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-mark"><span>N</span></div>
+      <h1>Neo<span>Bank</span></h1>
+      <p>Bezpieczna bankowość internetowa</p>
+    </div>
+
+    <h2 class="auth-title">Zaloguj się</h2>
+    <p class="auth-sub">Wpisz swoje dane logowania, aby uzyskać dostęp do konta</p>
+
+    <div id="login-error" class="alert alert-danger" style="display:none;">
+      ❌ Nieprawidłowy login lub hasło. Spróbuj ponownie.
+    </div>
+
+    <form id="login-form" onsubmit="doLogin(event)" novalidate>
+      <div class="form-group">
+        <label for="login-email">Adres e-mail / Login</label>
+        <div class="input-wrap has-icon">
+          <span class="input-icon">✉</span>
+          <input type="email" id="login-email" name="email" data-testid="input-login-email"
+                 placeholder="jan.kowalski@neobank.pl" required>
+        </div>
+        <div class="field-error" id="err-login-email">Podaj poprawny adres e-mail</div>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Hasło</label>
+        <div class="input-wrap has-icon">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="login-password" name="password"
+                 data-testid="input-login-password" placeholder="Twoje hasło" required>
+        </div>
+      </div>
+
+      <div class="form-row-space">
+        <label class="checkbox-row">
+          <input type="checkbox" id="remember-me" data-testid="cb-remember-me">
+          <span>Zapamiętaj mnie</span>
+        </label>
+        <span class="link" id="link-forgot-password" data-testid="link-forgot-password">Zapomniałem hasła</span>
+      </div>
+
+      <button type="submit" id="btn-login" class="btn btn-primary btn-full btn-lg"
+              data-testid="btn-login">Zaloguj się</button>
+
+      <p class="auth-footer-text">
+        Nie masz konta?
+        <span class="link" id="link-go-register" data-testid="link-go-register"
+              onclick="showPage('register')">Zarejestruj się</span>
+      </p>
+    </form>
+
+    <div class="demo-hint">Demo: użyj dowolnego e-maila i hasła (min. 6 znaków)</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     REGISTER PAGE
+══════════════════════════════ -->
+<div id="page-register" class="auth-page">
+  <div class="auth-card wide-card">
+    <div class="auth-logo">
+      <div class="logo-mark"><span>N</span></div>
+      <h1>Neo<span>Bank</span></h1>
+    </div>
+
+    <h2 class="auth-title">Otwórz konto</h2>
+    <p class="auth-sub">Rejestracja zajmuje tylko kilka minut</p>
+
+    <div class="steps-bar" id="reg-steps">
+      <div class="step-item active" id="step-item-1">
+        <div class="step-dot">1</div>
+        <div class="step-label">Dane osobowe</div>
+      </div>
+      <div class="step-item" id="step-item-2">
+        <div class="step-dot">2</div>
+        <div class="step-label">Kontakt</div>
+      </div>
+      <div class="step-item" id="step-item-3">
+        <div class="step-dot">3</div>
+        <div class="step-label">Hasło</div>
+      </div>
+      <div class="step-item" id="step-item-4">
+        <div class="step-dot">4</div>
+        <div class="step-label">Potwierdzenie</div>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-content active" id="reg-step-1">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-firstname">Imię *</label>
+          <input type="text" id="reg-firstname" data-testid="input-reg-firstname" placeholder="Jan" required>
+          <div class="field-error" id="err-reg-firstname">Imię jest wymagane</div>
+        </div>
+        <div class="form-group">
+          <label for="reg-lastname">Nazwisko *</label>
+          <input type="text" id="reg-lastname" data-testid="input-reg-lastname" placeholder="Kowalski" required>
+          <div class="field-error" id="err-reg-lastname">Nazwisko jest wymagane</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-pesel">PESEL *</label>
+          <input type="text" id="reg-pesel" data-testid="input-reg-pesel"
+                 placeholder="00000000000" maxlength="11">
+          <div class="field-error" id="err-reg-pesel">PESEL musi mieć 11 cyfr</div>
+        </div>
+        <div class="form-group">
+          <label for="reg-birthdate">Data urodzenia *</label>
+          <input type="date" id="reg-birthdate" data-testid="input-reg-birthdate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="reg-nationality">Obywatelstwo *</label>
+        <select id="reg-nationality" data-testid="select-reg-nationality">
+          <option value="">— wybierz —</option>
+          <option value="PL" selected>Polskie</option>
+          <option value="DE">Niemieckie</option>
+          <option value="UK">Brytyjskie</option>
+          <option value="UA">Ukraińskie</option>
+          <option value="other">Inne</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Typ konta *</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="reg-account-type" id="acc-type-personal"
+                   value="personal" data-testid="radio-personal" checked> Osobiste
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="reg-account-type" id="acc-type-business"
+                   value="business" data-testid="radio-business"> Firmowe
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="reg-account-type" id="acc-type-student"
+                   value="student" data-testid="radio-student"> Studenckie
+          </label>
+        </div>
+      </div>
+      <div class="step-nav right">
+        <button type="button" id="btn-reg-next-1" class="btn btn-primary"
+                data-testid="btn-reg-next-1" onclick="regNext(1)">Dalej →</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-content" id="reg-step-2">
+      <div class="form-group">
+        <label for="reg-email">Adres e-mail *</label>
+        <input type="email" id="reg-email" data-testid="input-reg-email"
+               placeholder="jan@example.com" required>
+        <div class="field-error" id="err-reg-email">Podaj poprawny e-mail</div>
+      </div>
+      <div class="form-group">
+        <label for="reg-phone">Telefon komórkowy *</label>
+        <input type="tel" id="reg-phone" data-testid="input-reg-phone"
+               placeholder="+48 500 000 000">
+      </div>
+      <div class="form-group">
+        <label for="reg-address">Adres zamieszkania *</label>
+        <input type="text" id="reg-address" data-testid="input-reg-address"
+               placeholder="ul. Marszałkowska 1">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="reg-city">Miasto *</label>
+          <input type="text" id="reg-city" data-testid="input-reg-city" placeholder="Warszawa">
+        </div>
+        <div class="form-group">
+          <label for="reg-zip">Kod pocztowy *</label>
+          <input type="text" id="reg-zip" data-testid="input-reg-zip"
+                 placeholder="00-000" maxlength="6">
+        </div>
+      </div>
+      <div class="step-nav space-between">
+        <button type="button" class="btn btn-outline" data-testid="btn-reg-back-2"
+                onclick="regBack(2)">← Wstecz</button>
+        <button type="button" id="btn-reg-next-2" class="btn btn-primary"
+                data-testid="btn-reg-next-2" onclick="regNext(2)">Dalej →</button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-content" id="reg-step-3">
+      <div class="form-group">
+        <label for="reg-password">Hasło *</label>
+        <input type="password" id="reg-password" data-testid="input-reg-password"
+               placeholder="min. 8 znaków" oninput="regStrength(this.value)">
+        <div class="field-error" id="err-reg-password">Hasło musi mieć min. 8 znaków</div>
+        <div class="strength-bars" id="strength-bars">
+          <div id="rb1"></div><div id="rb2"></div><div id="rb3"></div><div id="rb4"></div>
+        </div>
+        <div id="strength-text">Siła hasła</div>
+      </div>
+      <div class="form-group">
+        <label for="reg-password2">Powtórz hasło *</label>
+        <input type="password" id="reg-password2" data-testid="input-reg-password2"
+               placeholder="Wpisz ponownie">
+        <div class="field-error" id="err-reg-password2">Hasła nie są identyczne</div>
+      </div>
+      <div class="form-group">
+        <label for="reg-pin">PIN do aplikacji (4 cyfry) *</label>
+        <input type="password" id="reg-pin" data-testid="input-reg-pin"
+               placeholder="••••" maxlength="4" inputmode="numeric">
+      </div>
+      <div class="step-nav space-between">
+        <button type="button" class="btn btn-outline" data-testid="btn-reg-back-3"
+                onclick="regBack(3)">← Wstecz</button>
+        <button type="button" id="btn-reg-next-3" class="btn btn-primary"
+                data-testid="btn-reg-next-3" onclick="regNext(3)">Dalej →</button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-content" id="reg-step-4">
+      <div class="alert alert-info">ℹ Sprawdź poprawność danych przed zatwierdzeniem</div>
+      <div id="reg-summary" class="reg-summary"></div>
+      <div class="form-group">
+        <label class="checkbox-row" style="margin-bottom:0.6rem;">
+          <input type="checkbox" id="reg-terms" data-testid="cb-reg-terms">
+          <span>Akceptuję <span class="link">Regulamin NeoBank</span> i <span class="link">Politykę Prywatności</span></span>
+        </label>
+        <div class="field-error" id="err-reg-terms">Musisz zaakceptować regulamin</div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="reg-marketing" data-testid="cb-reg-marketing">
+          <span>Zgadzam się na komunikację marketingową (opcjonalne)</span>
+        </label>
+      </div>
+      <div class="step-nav space-between">
+        <button type="button" class="btn btn-outline" data-testid="btn-reg-back-4"
+                onclick="regBack(4)">← Wstecz</button>
+        <button type="button" id="btn-reg-submit" class="btn btn-gold btn-lg"
+                data-testid="btn-reg-submit" onclick="regSubmit()">✓ Otwórz konto</button>
+      </div>
+    </div>
+
+    <p class="auth-footer-text">
+      Masz już konto?
+      <span class="link" id="link-go-login" data-testid="link-go-login"
+            onclick="showPage('login')">Zaloguj się</span>
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     APP LAYOUT
+══════════════════════════════ -->
+<div id="app-layout" class="app-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="mark">N</div>
+      <div class="name">Neo<span>Bank</span></div>
+    </div>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">JK</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-name">Jan Kowalski</div>
+        <div class="user-role">Konto Premium</div>
+      </div>
+    </div>
+
+    <div class="nav-section-label">Finanse</div>
+    <div class="nav-item active" id="nav-dashboard" data-testid="nav-dashboard"
+         onclick="showSection('dashboard')">
+      <span class="nav-icon">📊</span><span class="nav-label">Pulpit</span>
+    </div>
+    <div class="nav-item" id="nav-accounts" data-testid="nav-accounts"
+         onclick="showSection('accounts')">
+      <span class="nav-icon">🏦</span><span class="nav-label">Moje konta</span>
+    </div>
+    <div class="nav-item" id="nav-transfers" data-testid="nav-transfers"
+         onclick="showSection('transfers')">
+      <span class="nav-icon">↔️</span><span class="nav-label">Przelewy</span>
+    </div>
+    <div class="nav-item" id="nav-history" data-testid="nav-history"
+         onclick="showSection('history')">
+      <span class="nav-icon">📜</span><span class="nav-label">Historia</span>
+    </div>
+
+    <div class="nav-section-label">Produkty</div>
+    <div class="nav-item" id="nav-cards" data-testid="nav-cards"
+         onclick="showSection('cards')">
+      <span class="nav-icon">💳</span><span class="nav-label">Karty</span>
+    </div>
+    <div class="nav-item" id="nav-loans" data-testid="nav-loans"
+         onclick="showSection('loans')">
+      <span class="nav-icon">🏠</span><span class="nav-label">Kredyty &amp; Lokaty</span>
+    </div>
+    <div class="nav-item" id="nav-payments" data-testid="nav-payments"
+         onclick="showSection('payments')">
+      <span class="nav-icon">🧾</span><span class="nav-label">Płatności</span>
+      <span class="nav-badge" id="cart-badge" style="display:none;">0</span>
+    </div>
+
+    <div class="nav-section-label">Narzędzia</div>
+    <div class="nav-item" id="nav-search" data-testid="nav-search"
+         onclick="showSection('search')">
+      <span class="nav-icon">🔍</span><span class="nav-label">Wyszukiwarka</span>
+    </div>
+    <div class="nav-item" id="nav-settings" data-testid="nav-settings"
+         onclick="showSection('settings')">
+      <span class="nav-icon">⚙️</span><span class="nav-label">Ustawienia</span>
+    </div>
+    <div class="nav-item" id="nav-support" data-testid="nav-support"
+         onclick="showSection('support')">
+      <span class="nav-icon">💬</span><span class="nav-label">Wsparcie</span>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-ghost btn-full" id="btn-logout" data-testid="btn-logout"
+              onclick="doLogout()">
+        🚪 Wyloguj się
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <div class="main-wrap">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Pulpit</div>
+      <div class="topbar-actions">
+        <button class="notif-btn" id="btn-notifications" data-testid="btn-notifications"
+                onclick="toggleNotif()">
+          🔔<span class="dot" id="notif-dot"></span>
+        </button>
+        <button class="btn btn-outline btn-sm" data-testid="btn-topbar-transfer"
+                onclick="showSection('transfers')">+ Przelew</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION DROPDOWN -->
+    <div class="notif-dropdown" id="notif-dropdown">
+      <div class="notif-header">
+        Powiadomienia <span class="badge badge-info">3</span>
+      </div>
+      <div class="notif-item unread" id="notif-1" data-testid="notif-item-1">
+        <div class="notif-dot"></div>
+        <div>
+          <div class="notif-text">Przelew przychodzący 2 350,00 zł od Anna Nowak</div>
+          <div class="notif-time">2 minuty temu</div>
+        </div>
+      </div>
+      <div class="notif-item unread" id="notif-2" data-testid="notif-item-2">
+        <div class="notif-dot"></div>
+        <div>
+          <div class="notif-text">Rata kredytowa 890,00 zł zostanie pobrana jutro</div>
+          <div class="notif-time">1 godz. temu</div>
+        </div>
+      </div>
+      <div class="notif-item unread" id="notif-3" data-testid="notif-item-3">
+        <div class="notif-dot"></div>
+        <div>
+          <div class="notif-text">Nowa oferta: Lokata 5,2% na 12 miesięcy</div>
+          <div class="notif-time">3 godz. temu</div>
+        </div>
+      </div>
+      <div class="notif-item" id="notif-4" data-testid="notif-item-4">
+        <div style="width:8px;"></div>
+        <div>
+          <div class="notif-text">Logowanie z nowego urządzenia wykryte</div>
+          <div class="notif-time">wczoraj, 18:32</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ─── DASHBOARD ─── -->
+      <div id="section-dashboard" class="section">
+        <div class="page-title">Dzień dobry, <span id="dash-name">Janie</span> 👋</div>
+        <div class="page-subtitle" id="dash-date"></div>
+
+        <div class="stat-grid">
+          <div class="stat-card" id="stat-total-balance" data-testid="stat-total-balance">
+            <span class="stat-icon">💰</span>
+            <div class="stat-label">Łączne saldo</div>
+            <div class="stat-value">48 320,50 zł</div>
+            <div class="stat-change up">▲ +2 350,00 zł dziś</div>
+          </div>
+          <div class="stat-card" id="stat-expenses" data-testid="stat-expenses">
+            <span class="stat-icon">📤</span>
+            <div class="stat-label">Wydatki (kwiecień)</div>
+            <div class="stat-value red">3 241,80 zł</div>
+            <div class="stat-change down">▲ +12% vs. marzec</div>
+          </div>
+          <div class="stat-card" id="stat-income" data-testid="stat-income">
+            <span class="stat-icon">📥</span>
+            <div class="stat-label">Przychody (kwiecień)</div>
+            <div class="stat-value green">8 500,00 zł</div>
+            <div class="stat-change up">▲ Wynagrodzenie</div>
+          </div>
+          <div class="stat-card" id="stat-savings" data-testid="stat-savings">
+            <span class="stat-icon">🏦</span>
+            <div class="stat-label">Oszczędności</div>
+            <div class="stat-value">15 000,00 zł</div>
+            <div class="stat-change">Lokata 5,2% p.a.</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Szybki przelew</div>
+            <div class="quick-contacts" id="quick-contacts">
+              <div class="qc-item" data-testid="qc-anna" onclick="quickTransfer('Anna Nowak','PL12345678901234567890123456')">
+                <div class="qc-avatar" style="background:#e11d48;">AN</div>
+                <div class="qc-name">Anna N.</div>
+              </div>
+              <div class="qc-item" data-testid="qc-piotr" onclick="quickTransfer('Piotr Wiśniewski','PL98876543210987654321098765')">
+                <div class="qc-avatar" style="background:#0369a1;">PW</div>
+                <div class="qc-name">Piotr W.</div>
+              </div>
+              <div class="qc-item" data-testid="qc-mama" onclick="quickTransfer('Mama','PL55111122223333444455556666')">
+                <div class="qc-avatar" style="background:#7c3aed;">MA</div>
+                <div class="qc-name">Mama</div>
+              </div>
+              <div class="qc-item" data-testid="qc-czynsz" onclick="quickTransfer('Administracja — Czynsz','PL33999900001111222233334444')">
+                <div class="qc-avatar" style="background:#059669;">CZ</div>
+                <div class="qc-name">Czynsz</div>
+              </div>
+              <div class="qc-item" data-testid="qc-add" onclick="showSection('transfers')">
+                <div class="qc-avatar add-avatar">＋</div>
+                <div class="qc-name">Dodaj</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <input type="number" id="quick-amount" data-testid="input-quick-amount"
+                     placeholder="Kwota (zł)" min="0.01" step="0.01">
+            </div>
+            <button class="btn btn-primary btn-full" id="btn-quick-send"
+                    data-testid="btn-quick-send" onclick="doQuickTransfer()">Wyślij przelew</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              Ostatnie transakcje
+              <button class="btn btn-ghost btn-sm" data-testid="link-all-transactions"
+                      onclick="showSection('history')">Zobacz wszystkie</button>
+            </div>
+            <div id="dash-transactions">
+              <div class="tx-row border-bottom">
+                <div class="tx-icon in">📥</div>
+                <div><div class="tx-title">Wynagrodzenie kwiecień</div><div class="tx-sub">01.04.2026 · Przelew przychodzący</div></div>
+                <div class="tx-amount in ml-auto">+8 500,00 zł</div>
+              </div>
+              <div class="tx-row border-bottom">
+                <div class="tx-icon out">🛒</div>
+                <div><div class="tx-title">Biedronka Warszawa</div><div class="tx-sub">31.03.2026 · Płatność kartą</div></div>
+                <div class="tx-amount out ml-auto">-87,43 zł</div>
+              </div>
+              <div class="tx-row border-bottom">
+                <div class="tx-icon out">⚡</div>
+                <div><div class="tx-title">Energa — prąd</div><div class="tx-sub">30.03.2026 · Płatność rachunku</div></div>
+                <div class="tx-amount out ml-auto">-234,00 zł</div>
+              </div>
+              <div class="tx-row">
+                <div class="tx-icon in">📥</div>
+                <div><div class="tx-title">Zwrot Amazon</div><div class="tx-sub">29.03.2026 · Przelew przychodzący</div></div>
+                <div class="tx-amount in ml-auto">+149,99 zł</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Budżet miesięczny</div>
+          <div class="grid-3">
+            <div class="budget-item">
+              <div class="budget-label"><span>🛒 Zakupy spożywcze</span><span>480 / 600 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:80%;background:#f59e0b;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-label"><span>🍽 Restauracje</span><span>210 / 400 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:52.5%;background:var(--success);"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-label"><span>🚗 Transport</span><span style="color:var(--danger)">380 / 300 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--danger);"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-label"><span>🎭 Rozrywka</span><span>130 / 300 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:43%;"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-label"><span>🏠 Mieszkanie</span><span>2 000 / 2 000 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--navy);"></div></div>
+            </div>
+            <div class="budget-item">
+              <div class="budget-label"><span>💊 Zdrowie</span><span>41 / 200 zł</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:20.5%;background:var(--success);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ACCOUNTS ─── -->
+      <div id="section-accounts" class="section" style="display:none;">
+        <div class="page-title">Moje konta</div>
+        <div class="page-subtitle">Zarządzaj swoimi rachunkami bankowymi</div>
+        <div class="grid-2">
+          <div>
+            <div class="bank-card" id="card-main" data-testid="bank-card-main" onclick="showAccountDetails('main')">
+              <div class="bc-type">Konto Osobiste Premium</div>
+              <div class="bc-balance"><div class="bc-balance-label">Saldo</div><div class="bc-balance-amount">32 450,50 zł</div></div>
+              <div class="bc-number">•••• •••• •••• 4782</div>
+              <div class="bc-name">JAN KOWALSKI</div>
+              <div class="bc-expiry">Otwarte od: 12.2019</div>
+              <div class="bc-logo">NEOBANK</div>
+            </div>
+            <div class="bank-card gold-card" id="card-savings" data-testid="bank-card-savings" onclick="showAccountDetails('savings')">
+              <div class="bc-type">Konto Oszczędnościowe</div>
+              <div class="bc-balance"><div class="bc-balance-label">Saldo</div><div class="bc-balance-amount">15 000,00 zł</div></div>
+              <div class="bc-number">•••• •••• •••• 9120</div>
+              <div class="bc-name">JAN KOWALSKI</div>
+              <div class="bc-expiry">Oprocentowanie: 5,2% p.a.</div>
+              <div class="bc-logo">NEOBANK</div>
+            </div>
+            <div class="bank-card green-card" id="card-eur" data-testid="bank-card-eur" onclick="showAccountDetails('eur')">
+              <div class="bc-type">Konto Walutowe EUR</div>
+              <div class="bc-balance"><div class="bc-balance-label">Saldo</div><div class="bc-balance-amount">870,00 €</div></div>
+              <div class="bc-number">•••• •••• •••• 3341</div>
+              <div class="bc-name">JAN KOWALSKI</div>
+              <div class="bc-expiry">≈ 3 741,00 zł (kurs: 4,30)</div>
+              <div class="bc-logo">NEOBANK</div>
+            </div>
+          </div>
+          <div class="card" id="account-details-panel" data-testid="account-details-panel">
+            <div class="card-title">Szczegóły konta <span id="acc-detail-name">— Konto Osobiste</span></div>
+            <table class="details-table">
+              <tr><td>Numer IBAN</td><td id="acc-iban">PL12 1234 5678 9012 3456 7890 1234 <button class="copy-btn" id="btn-copy-iban" data-testid="btn-copy-iban" onclick="copyIBAN()">📋</button></td></tr>
+              <tr><td>Saldo dostępne</td><td id="acc-balance" class="balance-positive">32 450,50 zł</td></tr>
+              <tr><td>Typ konta</td><td id="acc-type">Premium Personal</td></tr>
+              <tr><td>Waluta</td><td>PLN</td></tr>
+              <tr><td>Status</td><td><span class="badge badge-success">✓ Aktywne</span></td></tr>
+              <tr><td>Data otwarcia</td><td>15.12.2019</td></tr>
+            </table>
+            <hr class="divider">
+            <div class="btn-group">
+              <button class="btn btn-primary btn-sm" data-testid="btn-transfer-from-acc" onclick="showSection('transfers')">Przelej środki</button>
+              <button class="btn btn-outline btn-sm" data-testid="btn-acc-statement" onclick="showToast('Wyciąg pobierany...','info')">Pobierz wyciąg</button>
+              <button class="btn btn-outline btn-sm" data-testid="btn-acc-history" onclick="showSection('history')">Historia</button>
+              <button class="btn btn-danger btn-sm" data-testid="btn-close-acc" onclick="openModal('close-account')">Zamknij konto</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Otwórz nowe konto</div>
+          <div class="grid-3">
+            <div class="product-tile" id="new-acc-personal" data-testid="new-acc-personal">
+              <div class="product-icon">🏦</div>
+              <div class="product-name">Konto Osobiste</div>
+              <div class="product-desc">0 zł miesięcznie · Bez opłat za przelew</div>
+              <button class="btn btn-primary btn-sm" onclick="showToast('Wniosek złożony!','success')">Otwórz</button>
+            </div>
+            <div class="product-tile gold-tile" id="new-acc-savings" data-testid="new-acc-savings">
+              <div class="product-icon">💰</div>
+              <div class="product-name">Konto Oszczędnościowe</div>
+              <div class="product-desc">5,2% p.a. · Wpłaty i wypłaty bez ograniczeń</div>
+              <button class="btn btn-gold btn-sm" onclick="showToast('Wniosek złożony!','success')">Otwórz</button>
+            </div>
+            <div class="product-tile" id="new-acc-currency" data-testid="new-acc-currency">
+              <div class="product-icon">🌍</div>
+              <div class="product-name">Konto Walutowe</div>
+              <div class="product-desc">EUR, USD, GBP, CHF · Wymiana po kursie NBP</div>
+              <button class="btn btn-outline btn-sm" onclick="showToast('Wniosek złożony!','success')">Otwórz</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TRANSFERS ─── -->
+      <div id="section-transfers" class="section" style="display:none;">
+        <div class="page-title">Przelewy</div>
+        <div class="page-subtitle">Wykonaj przelew krajowy, zagraniczny lub BLIK</div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="tabs-inner">
+              <button class="tab-inner-btn active" id="tab-transfer-regular" data-testid="tab-transfer-regular" onclick="switchInner('transfer','regular',this)">Krajowy</button>
+              <button class="tab-inner-btn" id="tab-transfer-express" data-testid="tab-transfer-express" onclick="switchInner('transfer','express',this)">Ekspresowy</button>
+              <button class="tab-inner-btn" id="tab-transfer-foreign" data-testid="tab-transfer-foreign" onclick="switchInner('transfer','foreign',this)">Zagraniczny</button>
+              <button class="tab-inner-btn" id="tab-transfer-phone" data-testid="tab-transfer-phone" onclick="switchInner('transfer','phone',this)">BLIK</button>
+            </div>
+            <form id="transfer-form" onsubmit="submitTransfer(event)" novalidate>
+              <div class="tab-inner-panel active" id="panel-transfer-regular">
+                <div class="form-group">
+                  <label for="tr-from">Z konta *</label>
+                  <select id="tr-from" name="fromAccount" data-testid="select-tr-from" required>
+                    <option value="main">Konto Osobiste Premium (32 450,50 zł)</option>
+                    <option value="savings">Konto Oszczędnościowe (15 000,00 zł)</option>
+                    <option value="eur">Konto Walutowe EUR (870,00 €)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="tr-recipient">Odbiorca *</label>
+                  <input type="text" id="tr-recipient" name="recipient" data-testid="input-tr-recipient" placeholder="Imię i nazwisko / Firma" required>
+                </div>
+                <div class="form-group">
+                  <label for="tr-iban">Numer rachunku (IBAN) *</label>
+                  <input type="text" id="tr-iban" name="iban" data-testid="input-tr-iban" placeholder="PL00 0000 0000 0000 0000 0000 0000" maxlength="34" oninput="validateIBAN(this)" required>
+                  <div class="field-error" id="err-tr-iban">Nieprawidłowy numer IBAN</div>
+                  <div class="field-success" id="ok-tr-iban">✓ Numer IBAN jest poprawny</div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="tr-amount">Kwota (zł) *</label>
+                    <input type="number" id="tr-amount" name="amount" data-testid="input-tr-amount" placeholder="0,00" min="0.01" step="0.01" required>
+                    <div class="field-error" id="err-tr-amount">Minimalna kwota: 0,01 zł</div>
+                  </div>
+                  <div class="form-group">
+                    <label for="tr-date">Data realizacji</label>
+                    <input type="date" id="tr-date" name="date" data-testid="input-tr-date">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="tr-title">Tytuł przelewu *</label>
+                  <input type="text" id="tr-title" name="title" data-testid="input-tr-title" placeholder="np. Czynsz za kwiecień 2026" required>
+                </div>
+                <div class="form-group">
+                  <label class="checkbox-row">
+                    <input type="checkbox" id="tr-save-recipient" data-testid="cb-tr-save-recipient">
+                    <span>Zapisz odbiorcę w schowku</span>
+                  </label>
+                </div>
+                <div id="transfer-confirm-box" class="alert alert-warning" style="display:none;"></div>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-outline" data-testid="btn-tr-clear" onclick="clearTransferForm()">Wyczyść</button>
+                  <button type="submit" class="btn btn-primary" id="btn-transfer-submit" data-testid="btn-transfer-submit">Dalej →</button>
+                </div>
+              </div>
+
+              <div class="tab-inner-panel" id="panel-transfer-express">
+                <div class="alert alert-info" style="margin-bottom:1rem;">⚡ Przelew ekspresowy (SORBNET) — dostępny 24/7, opłata 10 zł</div>
+                <div class="form-group"><label for="te-recipient">Odbiorca *</label><input type="text" id="te-recipient" data-testid="input-te-recipient" placeholder="Imię i nazwisko / Firma"></div>
+                <div class="form-group"><label for="te-iban">Numer IBAN *</label><input type="text" id="te-iban" data-testid="input-te-iban" placeholder="PL00 0000 0000 0000 0000 0000 0000"></div>
+                <div class="form-group"><label for="te-amount">Kwota *</label><input type="number" id="te-amount" data-testid="input-te-amount" placeholder="0,00"></div>
+                <div class="form-group"><label for="te-title">Tytuł *</label><input type="text" id="te-title" data-testid="input-te-title" placeholder="Tytuł przelewu"></div>
+                <button type="button" class="btn btn-primary" data-testid="btn-te-submit" onclick="showToast('Przelew ekspresowy wysłany!','success')">Wyślij (opłata: 10 zł)</button>
+              </div>
+
+              <div class="tab-inner-panel" id="panel-transfer-foreign">
+                <div class="alert alert-info">🌍 Przelew SEPA / SWIFT — czas realizacji 1–3 dni robocze</div>
+                <div style="height:1rem;"></div>
+                <div class="form-group"><label for="tf-recipient">Odbiorca *</label><input type="text" id="tf-recipient" data-testid="input-tf-recipient" placeholder="Pełna nazwa odbiorcy"></div>
+                <div class="form-group"><label for="tf-country">Kraj odbiorcy *</label>
+                  <select id="tf-country" data-testid="select-tf-country">
+                    <option>Niemcy</option><option>Francja</option><option>Wielka Brytania</option>
+                    <option>USA</option><option>Szwajcaria</option><option>Niderlandy</option>
+                  </select>
+                </div>
+                <div class="form-group"><label for="tf-iban">IBAN / Numer konta *</label><input type="text" id="tf-iban" data-testid="input-tf-iban" placeholder="DE89 3704 0044 0532 0130 00"></div>
+                <div class="form-group"><label for="tf-bic">Kod BIC/SWIFT *</label><input type="text" id="tf-bic" data-testid="input-tf-bic" placeholder="COBADEFFXXX" maxlength="11"></div>
+                <div class="form-row">
+                  <div class="form-group"><label for="tf-amount">Kwota *</label><input type="number" id="tf-amount" data-testid="input-tf-amount" placeholder="0,00"></div>
+                  <div class="form-group"><label for="tf-currency">Waluta</label>
+                    <select id="tf-currency" data-testid="select-tf-currency"><option>EUR</option><option>USD</option><option>GBP</option><option>CHF</option></select>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary" data-testid="btn-tf-submit" onclick="showToast('Przelew zagraniczny wysłany!','success')">Wyślij przelew SWIFT</button>
+              </div>
+
+              <div class="tab-inner-panel" id="panel-transfer-phone">
+                <div class="form-group" style="margin-top:0.5rem;">
+                  <label for="blik-code">Kod BLIK *</label>
+                  <input type="text" id="blik-code" data-testid="input-blik-code" placeholder="000 000" maxlength="7" class="blik-input">
+                  <div class="field-error" id="err-blik">Kod BLIK musi mieć 6 cyfr</div>
+                </div>
+                <div class="form-group"><label for="blik-amount">Kwota *</label><input type="number" id="blik-amount" data-testid="input-blik-amount" placeholder="0,00"></div>
+                <p class="text-muted" style="margin-bottom:1rem;">Kod BLIK jest ważny 2 minuty. Wygeneruj go w aplikacji mobilnej.</p>
+                <button type="button" class="btn btn-primary btn-full" data-testid="btn-blik-submit" onclick="submitBLIK()">Zapłać BLIK</button>
+              </div>
+            </form>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="card-title">Zaplanowane przelewy</div>
+              <div class="scheduled-list">
+                <div class="scheduled-item">
+                  <div><div class="scheduled-name">Czynsz — Administracja</div><div class="scheduled-freq">Co miesiąc · 10. dnia</div></div>
+                  <div class="text-right"><div class="scheduled-amount">-2 000,00 zł</div><div class="scheduled-date">10.04.2026</div></div>
+                </div>
+                <div class="scheduled-item">
+                  <div><div class="scheduled-name">Netflix</div><div class="scheduled-freq">Co miesiąc · 15. dnia</div></div>
+                  <div class="text-right"><div class="scheduled-amount">-49,00 zł</div><div class="scheduled-date">15.04.2026</div></div>
+                </div>
+                <div class="scheduled-item" style="border-bottom:none;">
+                  <div><div class="scheduled-name">Składka ubezpieczenie</div><div class="scheduled-freq">Co kwartał · 1. dnia</div></div>
+                  <div class="text-right"><div class="scheduled-amount">-340,00 zł</div><div class="scheduled-date">01.07.2026</div></div>
+                </div>
+              </div>
+              <button class="btn btn-outline btn-sm" style="margin-top:0.8rem;" data-testid="btn-add-scheduled" onclick="showToast('Otwórz formularz zlecenia stałego','info')">+ Dodaj zlecenie stałe</button>
+            </div>
+            <div class="card">
+              <div class="card-title">Odbiorcy zaufani</div>
+              <div class="recipients-list" id="saved-recipients">
+                <div class="recipient-row">
+                  <div class="user-avatar sm-avatar" style="background:#e11d48;">AN</div>
+                  <div><div class="recipient-name">Anna Nowak</div><div class="recipient-iban">PL12 1234 … 7890</div></div>
+                  <button class="btn btn-primary btn-sm ml-auto" data-testid="btn-transfer-to-anna" onclick="quickTransfer('Anna Nowak','PL12345678901234567890123456')">Przelej</button>
+                </div>
+                <div class="recipient-row" style="border-bottom:none;">
+                  <div class="user-avatar sm-avatar" style="background:#0369a1;">PW</div>
+                  <div><div class="recipient-name">Piotr Wiśniewski</div><div class="recipient-iban">PL98 8765 … 8765</div></div>
+                  <button class="btn btn-primary btn-sm ml-auto" data-testid="btn-transfer-to-piotr" onclick="quickTransfer('Piotr Wiśniewski','PL98876543210987654321098765')">Przelej</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── HISTORY ─── -->
+      <div id="section-history" class="section" style="display:none;">
+        <div class="page-title">Historia transakcji</div>
+        <div class="page-subtitle">Pełna historia operacji na Twoich kontach</div>
+        <div class="card">
+          <div class="filter-bar">
+            <input type="text" id="hist-search" data-testid="input-hist-search" placeholder="🔍 Szukaj..." oninput="filterHistory()">
+            <div class="filter-group"><label>Od:</label><input type="date" id="hist-from" data-testid="input-hist-date-from" onchange="filterHistory()"></div>
+            <div class="filter-group"><label>Do:</label><input type="date" id="hist-to" data-testid="input-hist-date-to" onchange="filterHistory()"></div>
+            <select id="hist-type" data-testid="select-hist-type" onchange="filterHistory()">
+              <option value="">Wszystkie typy</option>
+              <option value="in">Przychodzące</option>
+              <option value="out">Wychodzące</option>
+            </select>
+            <select id="hist-cat" data-testid="select-hist-category" onchange="filterHistory()">
+              <option value="">Wszystkie kategorie</option>
+              <option value="przelew">Przelewy</option>
+              <option value="karta">Płatności kartą</option>
+              <option value="rachunek">Rachunki</option>
+              <option value="wynagrodzenie">Wynagrodzenie</option>
+            </select>
+            <button class="btn btn-outline btn-sm" data-testid="btn-hist-reset" onclick="resetHistory()">Resetuj</button>
+            <button class="btn btn-primary btn-sm" data-testid="btn-export" onclick="showToast('Eksport CSV pobierany...','info')">⬇ Eksport CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table id="history-table">
+              <thead>
+                <tr>
+                  <th onclick="sortHistory('date')" data-testid="th-date">Data ↕</th>
+                  <th onclick="sortHistory('title')">Tytuł ↕</th>
+                  <th>Kategoria</th>
+                  <th onclick="sortHistory('amount')">Kwota ↕</th>
+                  <th>Status</th>
+                  <th>Akcje</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="hist-pagination"></div>
+          <div class="table-info" id="hist-info"></div>
+        </div>
+      </div>
+
+      <!-- ─── CARDS ─── -->
+      <div id="section-cards" class="section" style="display:none;">
+        <div class="page-title">Karty płatnicze</div>
+        <div class="page-subtitle">Zarządzaj swoimi kartami debetowymi i kredytowymi</div>
+        <div class="grid-2">
+          <div>
+            <div class="visual-card" id="card-visual-main">
+              <div class="vc-type">Karta Debetowa Visa</div>
+              <div class="vc-number" id="card-num-display">4782 •••• •••• 1234</div>
+              <div class="vc-footer">
+                <div><div class="vc-sub">Właściciel</div><div id="card-holder-display">JAN KOWALSKI</div></div>
+                <div class="text-right"><div class="vc-sub">Ważna do</div><div>09/28</div></div>
+                <div class="vc-brand">VISA</div>
+              </div>
+            </div>
+            <div class="visual-card purple-card" id="card-visual-credit">
+              <div class="vc-type" style="color:#c4b5fd;">Karta Kredytowa Mastercard Gold</div>
+              <div class="vc-number">5412 •••• •••• 8810</div>
+              <div class="vc-footer">
+                <div><div class="vc-sub">Właściciel</div><div>JAN KOWALSKI</div></div>
+                <div class="text-right"><div class="vc-sub">Limit</div><div>10 000 zł</div></div>
+                <div class="vc-brand">MC</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Ustawienia karty debetowej</div>
+            <div class="settings-section">
+              <div class="settings-label">Status karty</div>
+              <div class="btn-group">
+                <button id="btn-card-active" class="btn btn-success btn-sm" data-testid="btn-card-active" onclick="setCardStatus('active')">✓ Aktywna</button>
+                <button id="btn-card-freeze" class="btn btn-outline btn-sm" data-testid="btn-card-freeze" onclick="setCardStatus('frozen')">❄ Zablokuj</button>
+                <button id="btn-card-block" class="btn btn-danger btn-sm" data-testid="btn-card-block" onclick="openModal('block-card')">🔴 Zastrzeż</button>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-label">Limit dzienny transakcji</div>
+              <div class="range-row">
+                <input type="range" id="card-daily-limit" data-testid="range-card-daily-limit" min="100" max="20000" step="100" value="5000" oninput="updateCardLimit('daily',this.value)">
+                <span class="range-display" id="daily-limit-display">5 000 zł</span>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-label">Limit wypłat z ATM</div>
+              <div class="range-row">
+                <input type="range" id="card-atm-limit" data-testid="range-card-atm-limit" min="100" max="5000" step="100" value="1000" oninput="updateCardLimit('atm',this.value)">
+                <span class="range-display" id="atm-limit-display">1 000 zł</span>
+              </div>
+            </div>
+            <hr class="divider">
+            <div class="settings-label">Zezwolenia</div>
+            <div class="toggles-list">
+              <div class="toggle-wrap"><div class="toggle on" id="toggle-contactless" data-testid="toggle-contactless" onclick="toggleEl(this)"></div><span>Płatności zbliżeniowe</span></div>
+              <div class="toggle-wrap"><div class="toggle on" id="toggle-online" data-testid="toggle-online-payments" onclick="toggleEl(this)"></div><span>Płatności online</span></div>
+              <div class="toggle-wrap"><div class="toggle" id="toggle-foreign" data-testid="toggle-foreign-payments" onclick="toggleEl(this)"></div><span>Płatności zagraniczne</span></div>
+              <div class="toggle-wrap"><div class="toggle on" id="toggle-atm" data-testid="toggle-atm" onclick="toggleEl(this)"></div><span>Wypłaty z bankomatów</span></div>
+            </div>
+            <div class="btn-group" style="margin-top:1rem;">
+              <button class="btn btn-outline btn-sm" data-testid="btn-generate-cvv" onclick="showToast('Jednorazowy CVV: 427','info')">Generuj jednorazowy CVV</button>
+              <button class="btn btn-outline btn-sm" data-testid="btn-show-pin" onclick="openModal('show-pin')">Pokaż PIN</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── LOANS ─── -->
+      <div id="section-loans" class="section" style="display:none;">
+        <div class="page-title">Kredyty &amp; Lokaty</div>
+        <div class="page-subtitle">Twoje produkty finansowe i kalkulator kredytowy</div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Kalkulator kredytowy</div>
+            <div class="form-group"><label>Kwota kredytu</label>
+              <div class="range-row"><input type="range" id="loan-amount" data-testid="range-loan-amount" min="1000" max="500000" step="1000" value="50000" oninput="calcLoan()"><span class="range-display" id="loan-amount-display">50 000 zł</span></div>
+            </div>
+            <div class="form-group"><label>Okres spłaty</label>
+              <div class="range-row"><input type="range" id="loan-period" data-testid="range-loan-period" min="6" max="360" step="6" value="60" oninput="calcLoan()"><span class="range-display" id="loan-period-display">60 mies.</span></div>
+            </div>
+            <div class="form-group"><label for="loan-type">Typ rat</label>
+              <select id="loan-type" data-testid="select-loan-type" onchange="calcLoan()"><option value="equal">Równe</option><option value="decreasing">Malejące</option></select>
+            </div>
+            <div class="form-group"><label for="loan-rate">Oprocentowanie (%)</label>
+              <input type="number" id="loan-rate" data-testid="input-loan-rate" value="8.99" step="0.01" min="0" max="30" oninput="calcLoan()">
+            </div>
+            <div class="loan-result" id="loan-result" data-testid="loan-result">
+              <div class="loan-result-label">Miesięczna rata</div>
+              <div class="loan-result-amount" id="loan-monthly">1 038,41 zł</div>
+              <div class="loan-result-footer">
+                <span>RRSO: <strong>9,37%</strong></span>
+                <span>Łącznie: <strong id="loan-total">62 304,60 zł</strong></span>
+                <span>Koszt: <strong id="loan-cost">12 304,60 zł</strong></span>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full" style="margin-top:1rem;" data-testid="btn-loan-apply" onclick="openModal('loan-apply')">Złóż wniosek o kredyt</button>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">Aktywne kredyty</div>
+              <div class="loan-item border-bottom">
+                <div class="loan-header"><span class="loan-name">Kredyt hipoteczny</span><span class="badge badge-success">Aktywny</span></div>
+                <div class="loan-meta">Saldo: 187 430,20 zł · Rata: 1 890,00 zł/mies.</div>
+                <div class="progress-track"><div class="progress-fill" style="width:35%;"></div></div>
+                <div class="loan-meta">35% spłacony · 195 rat pozostało</div>
+              </div>
+              <div class="loan-item">
+                <div class="loan-header"><span class="loan-name">Kredyt konsumpcyjny</span><span class="badge badge-success">Aktywny</span></div>
+                <div class="loan-meta">Saldo: 8 200,00 zł · Rata: 620,00 zł/mies.</div>
+                <div class="progress-track"><div class="progress-fill" style="width:72%;background:var(--gold);"></div></div>
+                <div class="loan-meta">72% spłacony · 14 rat pozostało</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Lokaty terminowe</div>
+              <div class="loan-item border-bottom">
+                <div class="loan-header"><span class="loan-name">Lokata 12M Premium</span><span style="color:var(--success);font-weight:700;">+5,20%</span></div>
+                <div class="loan-meta">15 000,00 zł · Zapada: 12.12.2026</div>
+                <div style="color:var(--success);font-size:0.75rem;">Odsetki: ≈ 780,00 zł</div>
+              </div>
+              <div class="loan-item">
+                <div class="loan-header"><span class="loan-name">Lokata 3M Standard</span><span style="color:var(--success);font-weight:700;">+4,10%</span></div>
+                <div class="loan-meta">5 000,00 zł · Zapada: 15.06.2026</div>
+                <div style="color:var(--success);font-size:0.75rem;">Odsetki: ≈ 51,25 zł</div>
+              </div>
+              <button class="btn btn-gold btn-sm" style="margin-top:0.8rem;" data-testid="btn-open-deposit" onclick="openModal('open-deposit')">+ Otwórz lokatę</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PAYMENTS ─── -->
+      <div id="section-payments" class="section" style="display:none;">
+        <div class="page-title">Centrum płatności</div>
+        <div class="page-subtitle">Opłać rachunki, dodaj je do koszyka i zapłać wszystko naraz</div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Dodaj rachunek do koszyka</div>
+            <div class="form-group"><label for="pay-type">Typ rachunku</label>
+              <select id="pay-type" data-testid="select-pay-type">
+                <option value="⚡" data-name="Prąd">Energia elektryczna</option>
+                <option value="💧" data-name="Woda">Wodociągi / Kanalizacja</option>
+                <option value="🔥" data-name="Gaz">Gaz</option>
+                <option value="📡" data-name="Internet">Internet / TV</option>
+                <option value="📱" data-name="Telefon">Telefon komórkowy</option>
+                <option value="🏠" data-name="Czynsz">Czynsz / Administracja</option>
+                <option value="🛡" data-name="Ubezpieczenie">Ubezpieczenie</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="pay-company">Nazwa firmy</label><input type="text" id="pay-company" data-testid="input-pay-company" placeholder="np. Energa SA"></div>
+            <div class="form-group"><label for="pay-account">Numer rachunku bankowego</label><input type="text" id="pay-account" data-testid="input-pay-account" placeholder="PL00 0000 0000 0000 0000 0000 0000"></div>
+            <div class="form-row">
+              <div class="form-group"><label for="pay-amount">Kwota (zł) *</label><input type="number" id="pay-amount" data-testid="input-pay-amount" placeholder="0,00" min="0.01" step="0.01"></div>
+              <div class="form-group"><label for="pay-due">Termin płatności</label><input type="date" id="pay-due" data-testid="input-pay-due"></div>
+            </div>
+            <div class="form-group"><label for="pay-ref">Numer referencyjny</label><input type="text" id="pay-ref" data-testid="input-pay-ref" placeholder="np. Numer faktury"></div>
+            <button class="btn btn-primary btn-full" id="btn-add-to-cart" data-testid="btn-add-to-cart" onclick="addToCart()">+ Dodaj do koszyka</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Koszyk płatności <span class="badge badge-navy" id="cart-count-badge">0 pozycji</span></div>
+            <div id="cart-empty" class="empty-state">
+              <div class="empty-icon">🧾</div>
+              <h3>Koszyk jest pusty</h3>
+              <p>Dodaj rachunki z lewego panelu</p>
+            </div>
+            <div id="cart-items" style="display:none;">
+              <div id="cart-list"></div>
+              <hr class="divider">
+              <div class="cart-total-row">
+                <span>Łącznie do zapłaty:</span>
+                <span class="cart-total-amount" id="cart-total">0,00 zł</span>
+              </div>
+              <div class="form-group" style="margin-top:0.8rem;">
+                <label for="cart-from-account">Zapłać z konta</label>
+                <select id="cart-from-account" data-testid="select-cart-from">
+                  <option>Konto Osobiste Premium (32 450,50 zł)</option>
+                  <option>Konto Oszczędnościowe (15 000,00 zł)</option>
+                </select>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-outline" id="btn-cart-clear" data-testid="btn-cart-clear" onclick="clearCart()">Wyczyść</button>
+                <button class="btn btn-gold btn-full" id="btn-cart-pay" data-testid="btn-cart-pay" onclick="payCart()">💳 Zapłać wszystkie rachunki</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Szybkie płatności</div>
+          <div class="grid-4">
+            <div class="quick-pay-tile" data-testid="quick-pay-energa" onclick="quickBill('Energa SA','PL11234567890123456789012345','⚡',234.00)">
+              <div class="qp-icon">⚡</div><div class="qp-name">Energa</div><div class="qp-amount">234,00 zł</div>
+            </div>
+            <div class="quick-pay-tile" data-testid="quick-pay-water" onclick="quickBill('Wodociągi Miejskie','PL22345678901234567890123456','💧',87.50)">
+              <div class="qp-icon">💧</div><div class="qp-name">Wodociągi</div><div class="qp-amount">87,50 zł</div>
+            </div>
+            <div class="quick-pay-tile" data-testid="quick-pay-orange" onclick="quickBill('Orange Polska','PL33456789012345678901234567','📱',79.00)">
+              <div class="qp-icon">📱</div><div class="qp-name">Orange</div><div class="qp-amount">79,00 zł</div>
+            </div>
+            <div class="quick-pay-tile" data-testid="quick-pay-netflix" onclick="quickBill('Netflix','PL44567890123456789012345678','📺',49.00)">
+              <div class="qp-icon">📺</div><div class="qp-name">Netflix</div><div class="qp-amount">49,00 zł</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SEARCH ─── -->
+      <div id="section-search" class="section" style="display:none;">
+        <div class="page-title">Wyszukiwarka</div>
+        <div class="page-subtitle">Szukaj transakcji, odbiorców i oddziałów</div>
+        <div class="card">
+          <div class="search-box" style="margin-bottom:1.2rem;">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="main-search" data-testid="input-main-search" placeholder="Wyszukaj transakcję, odbiorcę, produkt..." oninput="doSearch(this.value)" class="search-input">
+          </div>
+          <div class="filter-bar">
+            <div class="filter-group"><label>Kwota od:</label><input type="number" id="srch-min" data-testid="input-srch-min" placeholder="Min zł" style="max-width:100px;" oninput="doSearch(document.getElementById('main-search').value)"></div>
+            <div class="filter-group"><label>do:</label><input type="number" id="srch-max" data-testid="input-srch-max" placeholder="Max zł" style="max-width:100px;" oninput="doSearch(document.getElementById('main-search').value)"></div>
+            <div class="filter-group"><label>Okres:</label>
+              <select id="srch-period" data-testid="select-srch-period" onchange="doSearch(document.getElementById('main-search').value)">
+                <option value="">Wszystkie</option><option value="7">7 dni</option>
+                <option value="30">30 dni</option><option value="90">90 dni</option>
+              </select>
+            </div>
+            <div class="filter-group"><label>Typ:</label>
+              <select id="srch-type" data-testid="select-srch-type" onchange="doSearch(document.getElementById('main-search').value)">
+                <option value="">Wszystkie</option><option value="in">Przychodzące</option><option value="out">Wychodzące</option>
+              </select>
+            </div>
+          </div>
+          <div id="search-results"><div class="search-hint">Wpisz frazę, aby wyszukać</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Popularne wyszukiwania</div>
+          <div class="chips">
+            <span class="chip" data-testid="chip-biedronka" onclick="searchChip('Biedronka')">Biedronka</span>
+            <span class="chip" data-testid="chip-allegro" onclick="searchChip('Allegro')">Allegro</span>
+            <span class="chip" data-testid="chip-wynagrodzenie" onclick="searchChip('Wynagrodzenie')">Wynagrodzenie</span>
+            <span class="chip" data-testid="chip-czynsz" onclick="searchChip('Czynsz')">Czynsz</span>
+            <span class="chip" data-testid="chip-netflix" onclick="searchChip('Netflix')">Netflix</span>
+            <span class="chip" data-testid="chip-olx" onclick="searchChip('OLX')">OLX</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Znajdź bankomat / oddział</div>
+          <div class="form-row">
+            <div class="form-group"><label for="atm-city">Miasto</label><input type="text" id="atm-city" data-testid="input-atm-city" placeholder="np. Warszawa"></div>
+            <div class="form-group"><label for="atm-type">Typ placówki</label>
+              <select id="atm-type" data-testid="select-atm-type">
+                <option>Bankomat</option><option>Oddział</option><option>Wpłatomat</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary" data-testid="btn-find-atm" onclick="findATM()">🗺 Szukaj placówki</button>
+          <div id="atm-results" style="margin-top:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- ─── SETTINGS ─── -->
+      <div id="section-settings" class="section" style="display:none;">
+        <div class="page-title">Ustawienia konta</div>
+        <div class="page-subtitle">Zarządzaj swoim profilem i preferencjami</div>
+        <div class="tabs-inner">
+          <button class="tab-inner-btn active" data-testid="settings-tab-profile" onclick="switchInner('settings','profile',this)">Profil</button>
+          <button class="tab-inner-btn" data-testid="settings-tab-security" onclick="switchInner('settings','security',this)">Bezpieczeństwo</button>
+          <button class="tab-inner-btn" data-testid="settings-tab-notif" onclick="switchInner('settings','notif',this)">Powiadomienia</button>
+          <button class="tab-inner-btn" data-testid="settings-tab-limits" onclick="switchInner('settings','limits',this)">Limity</button>
+        </div>
+        <div class="tab-inner-panel active" id="panel-settings-profile">
+          <div class="card">
+            <div class="card-title">Dane osobowe</div>
+            <div class="avatar-section">
+              <div id="settings-avatar" class="big-avatar">JK</div>
+              <div><button class="btn btn-outline btn-sm" data-testid="btn-change-photo" onclick="showToast('Funkcja ładowania zdjęcia','info')">Zmień zdjęcie</button><div class="text-muted" style="margin-top:0.4rem;">Max 5 MB · JPG, PNG</div></div>
+            </div>
+            <form id="profile-form" onsubmit="saveProfile(event)" novalidate>
+              <div class="form-row">
+                <div class="form-group"><label for="set-firstname">Imię</label><input type="text" id="set-firstname" data-testid="input-set-firstname" value="Jan"></div>
+                <div class="form-group"><label for="set-lastname">Nazwisko</label><input type="text" id="set-lastname" data-testid="input-set-lastname" value="Kowalski"></div>
+              </div>
+              <div class="form-group"><label for="set-email">Adres e-mail</label><input type="email" id="set-email" data-testid="input-set-email" value="jan.kowalski@neobank.pl"></div>
+              <div class="form-row">
+                <div class="form-group"><label for="set-phone">Telefon</label><input type="tel" id="set-phone" data-testid="input-set-phone" value="+48 501 234 567"></div>
+                <div class="form-group"><label for="set-birthdate">Data urodzenia</label><input type="date" id="set-birthdate" data-testid="input-set-birthdate" value="1990-05-15"></div>
+              </div>
+              <div class="form-group"><label for="set-address">Adres</label><input type="text" id="set-address" data-testid="input-set-address" value="ul. Marszałkowska 10/5"></div>
+              <div class="form-row">
+                <div class="form-group"><label for="set-city">Miasto</label><input type="text" id="set-city" data-testid="input-set-city" value="Warszawa"></div>
+                <div class="form-group"><label for="set-zip">Kod pocztowy</label><input type="text" id="set-zip" data-testid="input-set-zip" value="00-001"></div>
+              </div>
+              <div class="form-group"><label for="set-language">Język</label>
+                <select id="set-language" data-testid="select-set-language"><option selected>Polski</option><option>English</option><option>Deutsch</option></select>
+              </div>
+              <div class="btn-group">
+                <button type="submit" class="btn btn-primary" id="btn-save-profile" data-testid="btn-save-profile">Zapisz zmiany</button>
+                <button type="reset" class="btn btn-outline" data-testid="btn-reset-profile">Anuluj</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="tab-inner-panel" id="panel-settings-security">
+          <div class="card">
+            <div class="card-title">Zmiana hasła</div>
+            <div class="form-group"><label for="old-password">Obecne hasło</label><input type="password" id="old-password" data-testid="input-old-password" placeholder="Twoje obecne hasło"></div>
+            <div class="form-group"><label for="new-password">Nowe hasło</label><input type="password" id="new-password" data-testid="input-new-password" placeholder="Min. 8 znaków"></div>
+            <div class="form-group"><label for="confirm-password">Potwierdź hasło</label><input type="password" id="confirm-password" data-testid="input-confirm-password" placeholder="Wpisz ponownie"></div>
+            <button class="btn btn-primary" data-testid="btn-change-password" onclick="changePassword()">Zmień hasło</button>
+          </div>
+          <div class="card">
+            <div class="card-title">Weryfikacja dwuetapowa (2FA)</div>
+            <div class="toggles-list">
+              <div class="toggle-wrap"><div class="toggle on" id="toggle-2fa" data-testid="toggle-2fa" onclick="toggleEl(this)"></div><span>SMS na numer +48 501 *** 567</span></div>
+              <div class="toggle-wrap"><div class="toggle" id="toggle-2fa-app" data-testid="toggle-2fa-app" onclick="toggleEl(this)"></div><span>Aplikacja uwierzytelniająca (TOTP)</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Aktywne sesje</div>
+            <div class="session-item border-bottom">
+              <div><div class="session-name">💻 Chrome / Windows 11</div><div class="session-meta">Warszawa · Aktywna sesja</div></div>
+              <span class="badge badge-success">Bieżąca</span>
+            </div>
+            <div class="session-item">
+              <div><div class="session-name">📱 NeoBank Mobile / iOS</div><div class="session-meta">Warszawa · 2 godz. temu</div></div>
+              <button class="btn btn-danger btn-sm" data-testid="btn-end-session" onclick="showToast('Sesja zakończona','success')">Zakończ</button>
+            </div>
+          </div>
+        </div>
+        <div class="tab-inner-panel" id="panel-settings-notif">
+          <div class="card">
+            <div class="card-title">Preferencje powiadomień</div>
+            <div class="notif-section-label">📧 E-MAIL</div>
+            <div class="toggles-list" style="margin-bottom:1.2rem;">
+              <div class="toggle-wrap"><div class="toggle on" data-testid="toggle-email-transactions" onclick="toggleEl(this)"></div><span>Potwierdzenia transakcji</span></div>
+              <div class="toggle-wrap"><div class="toggle on" data-testid="toggle-email-security" onclick="toggleEl(this)"></div><span>Alerty bezpieczeństwa</span></div>
+              <div class="toggle-wrap"><div class="toggle" data-testid="toggle-email-marketing" onclick="toggleEl(this)"></div><span>Oferty i promocje</span></div>
+            </div>
+            <div class="notif-section-label">📱 PUSH / SMS</div>
+            <div class="toggles-list" style="margin-bottom:1.2rem;">
+              <div class="toggle-wrap"><div class="toggle on" data-testid="toggle-sms-transactions" onclick="toggleEl(this)"></div><span>SMS przy każdej transakcji</span></div>
+              <div class="toggle-wrap"><div class="toggle on" data-testid="toggle-push-login" onclick="toggleEl(this)"></div><span>Push przy logowaniu</span></div>
+              <div class="toggle-wrap"><div class="toggle" data-testid="toggle-push-news" onclick="toggleEl(this)"></div><span>Aktualności bankowe</span></div>
+            </div>
+            <div class="form-group"><label for="notif-threshold">Próg kwotowy powiadomień SMS (zł)</label><input type="number" id="notif-threshold" data-testid="input-notif-threshold" value="50" min="0" step="10"></div>
+            <button class="btn btn-primary" data-testid="btn-save-notif" onclick="showToast('Preferencje zapisane!','success')">Zapisz preferencje</button>
+          </div>
+        </div>
+        <div class="tab-inner-panel" id="panel-settings-limits">
+          <div class="card">
+            <div class="card-title">Limity transakcyjne</div>
+            <div class="limits-list">
+              <div class="limit-item"><label>Dzienny limit przelewów</label><div class="range-row"><input type="range" id="lim-daily-transfer" data-testid="range-lim-daily" min="100" max="100000" step="100" value="20000" oninput="document.getElementById('lim-daily-val').textContent=Number(this.value).toLocaleString('pl-PL')+' zł'"><span class="range-display" id="lim-daily-val">20 000 zł</span></div></div>
+              <div class="limit-item"><label>Limit płatności kartą online (dziennie)</label><div class="range-row"><input type="range" id="lim-online" data-testid="range-lim-online" min="0" max="20000" step="100" value="5000" oninput="document.getElementById('lim-online-val').textContent=Number(this.value).toLocaleString('pl-PL')+' zł'"><span class="range-display" id="lim-online-val">5 000 zł</span></div></div>
+              <div class="limit-item"><label>Limit wypłat ATM (dziennie)</label><div class="range-row"><input type="range" id="lim-atm" data-testid="range-lim-atm" min="0" max="5000" step="100" value="1000" oninput="document.getElementById('lim-atm-val').textContent=Number(this.value).toLocaleString('pl-PL')+' zł'"><span class="range-display" id="lim-atm-val">1 000 zł</span></div></div>
+              <div class="limit-item"><label>Limit jednej transakcji BLIK</label><div class="range-row"><input type="range" id="lim-blik" data-testid="range-lim-blik" min="0" max="5000" step="50" value="500" oninput="document.getElementById('lim-blik-val').textContent=Number(this.value).toLocaleString('pl-PL')+' zł'"><span class="range-display" id="lim-blik-val">500 zł</span></div></div>
+            </div>
+            <hr class="divider">
+            <button class="btn btn-primary" data-testid="btn-save-limits" onclick="showToast('Limity zostały zapisane!','success')">Zapisz limity</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SUPPORT ─── -->
+      <div id="section-support" class="section" style="display:none;">
+        <div class="page-title">Centrum wsparcia</div>
+        <div class="page-subtitle">Masz pytanie? Jesteśmy tu, by pomóc.</div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">Napisz do nas</div>
+            <form id="support-form" onsubmit="submitSupport(event)" novalidate>
+              <div class="form-group">
+                <label for="sup-topic">Temat</label>
+                <select id="sup-topic" data-testid="select-sup-topic">
+                  <option value="">— wybierz temat —</option>
+                  <option value="transfer">Problem z przelewem</option>
+                  <option value="card">Problem z kartą</option>
+                  <option value="login">Problem z logowaniem</option>
+                  <option value="account">Pytanie o konto</option>
+                  <option value="loan">Kredyty i lokaty</option>
+                  <option value="other">Inne</option>
+                </select>
+                <div class="field-error" id="err-sup-topic">Wybierz temat zgłoszenia</div>
+              </div>
+              <div class="form-group">
+                <label>Priorytet</label>
+                <div class="radio-group">
+                  <label class="radio-label"><input type="radio" name="sup-priority" id="prio-low" value="low" data-testid="radio-prio-low"> Niski</label>
+                  <label class="radio-label"><input type="radio" name="sup-priority" id="prio-med" value="medium" data-testid="radio-prio-medium" checked> Średni</label>
+                  <label class="radio-label"><input type="radio" name="sup-priority" id="prio-high" value="high" data-testid="radio-prio-high"> Wysoki</label>
+                  <label class="radio-label"><input type="radio" name="sup-priority" id="prio-urgent" value="urgent" data-testid="radio-prio-urgent"> 🔴 Pilny</label>
+                </div>
+              </div>
+              <div class="form-group"><label for="sup-subject">Tytuł zgłoszenia *</label><input type="text" id="sup-subject" data-testid="input-sup-subject" placeholder="Krótko opisz problem" required></div>
+              <div class="form-group">
+                <label for="sup-message">Wiadomość *</label>
+                <textarea id="sup-message" data-testid="textarea-sup-message" rows="5" placeholder="Opisz problem szczegółowo..." required></textarea>
+                <div class="char-count"><span id="sup-char-count">0</span>/1000 znaków</div>
+              </div>
+              <div class="form-group"><label class="checkbox-row"><input type="checkbox" id="sup-callback" data-testid="cb-sup-callback"><span>Proszę o kontakt telefoniczny</span></label></div>
+              <div id="sup-success" class="alert alert-success" style="display:none;">✅ Zgłoszenie nr <strong id="ticket-num"></strong> zostało przyjęte.</div>
+              <button type="submit" class="btn btn-primary" id="btn-sup-submit" data-testid="btn-sup-submit">Wyślij zgłoszenie</button>
+            </form>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">Inne kanały kontaktu</div>
+              <div class="contact-list">
+                <div class="contact-item"><span class="contact-icon">📞</span><div><div class="contact-name">Infolinia 24/7</div><div class="contact-meta">800 100 200 (bezpłatna)</div></div></div>
+                <div class="contact-item"><span class="contact-icon">💬</span><div><div class="contact-name">Chat online</div><div class="contact-meta">Pon–Pt 8:00–20:00</div></div><button class="btn btn-primary btn-sm ml-auto" data-testid="btn-start-chat" onclick="showToast('Łączenie z konsultantem...','info')">Połącz</button></div>
+                <div class="contact-item"><span class="contact-icon">🏦</span><div><div class="contact-name">Oddziały</div><div class="contact-meta">Ponad 200 placówek w Polsce</div></div><button class="btn btn-outline btn-sm ml-auto" data-testid="btn-find-branch" onclick="showSection('search')">Znajdź</button></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">FAQ</div>
+              <div id="faq-acc">
+                <div class="acc-item" id="faq-1"><div class="acc-header" data-testid="faq-header-1" onclick="toggleAcc(this)">Jak zmienić hasło? <span class="acc-chevron">▼</span></div><div class="acc-body">Przejdź do Ustawienia → Bezpieczeństwo → Zmiana hasła. Będziesz potrzebować bieżącego hasła oraz kodu SMS.</div></div>
+                <div class="acc-item" id="faq-2"><div class="acc-header" data-testid="faq-header-2" onclick="toggleAcc(this)">Jak zablokować kartę? <span class="acc-chevron">▼</span></div><div class="acc-body">Przejdź do Karty → wybierz kartę → Zastrzeż kartę. W nagłych przypadkach zadzwoń na infolinię 800 100 200.</div></div>
+                <div class="acc-item" id="faq-3"><div class="acc-header" data-testid="faq-header-3" onclick="toggleAcc(this)">Ile trwa przelew ekspresowy? <span class="acc-chevron">▼</span></div><div class="acc-body">Przelew ekspresowy SORBNET jest realizowany w ciągu kilku minut, dostępny 24/7. Opłata wynosi 10 zł.</div></div>
+                <div class="acc-item" id="faq-4"><div class="acc-header" data-testid="faq-header-4" onclick="toggleAcc(this)">Jak aktywować BLIK? <span class="acc-chevron">▼</span></div><div class="acc-body">BLIK jest automatycznie dostępny dla wszystkich klientów NeoBank. Kod generujesz w zakładce Przelewy → BLIK.</div></div>
+                <div class="acc-item" id="faq-5"><div class="acc-header" data-testid="faq-header-5" onclick="toggleAcc(this)">Czy moje środki są bezpieczne? <span class="acc-chevron">▼</span></div><div class="acc-body">Tak. Depozyty są gwarantowane przez Bankowy Fundusz Gwarancyjny do równowartości 100 000 EUR.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </div><!-- /main-wrap -->
+</div><!-- /app-layout -->
+
+<!-- MODALS -->
+<div class="overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-sub"   id="modal-sub"></div>
+    <div id="modal-content"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
