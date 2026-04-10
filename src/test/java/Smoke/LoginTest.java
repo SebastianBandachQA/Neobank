@@ -23,5 +23,12 @@ public class LoginTest extends BaseTestClass {
         driver.findElement(By.id("login-password")).sendKeys("4444");
         driver.findElement(By.id("btn-login")).click();
     }
+    @Test
+    public void RightLogin(){
+        driver.findElement(By.id("login-email")).sendKeys("belobelo@wp.pl");
+        driver.findElement(By.id("login-password")).sendKeys("147258");
+        driver.findElement(By.id("btn-login")).click();
+
+    }
 
 }

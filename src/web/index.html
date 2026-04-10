@@ -873,31 +873,11 @@
           <div>
             <div class="card">
               <div class="card-title">Aktywne kredyty</div>
-              <div class="loan-item border-bottom">
-                <div class="loan-header"><span class="loan-name">Kredyt hipoteczny</span><span class="badge badge-success">Aktywny</span></div>
-                <div class="loan-meta">Saldo: 187 430,20 zł · Rata: 1 890,00 zł/mies.</div>
-                <div class="progress-track"><div class="progress-fill" style="width:35%;"></div></div>
-                <div class="loan-meta">35% spłacony · 195 rat pozostało</div>
-              </div>
-              <div class="loan-item">
-                <div class="loan-header"><span class="loan-name">Kredyt konsumpcyjny</span><span class="badge badge-success">Aktywny</span></div>
-                <div class="loan-meta">Saldo: 8 200,00 zł · Rata: 620,00 zł/mies.</div>
-                <div class="progress-track"><div class="progress-fill" style="width:72%;background:var(--gold);"></div></div>
-                <div class="loan-meta">72% spłacony · 14 rat pozostało</div>
-              </div>
+              <div id="loans-list"></div>
             </div>
             <div class="card">
               <div class="card-title">Lokaty terminowe</div>
-              <div class="loan-item border-bottom">
-                <div class="loan-header"><span class="loan-name">Lokata 12M Premium</span><span style="color:var(--success);font-weight:700;">+5,20%</span></div>
-                <div class="loan-meta">15 000,00 zł · Zapada: 12.12.2026</div>
-                <div style="color:var(--success);font-size:0.75rem;">Odsetki: ≈ 780,00 zł</div>
-              </div>
-              <div class="loan-item">
-                <div class="loan-header"><span class="loan-name">Lokata 3M Standard</span><span style="color:var(--success);font-weight:700;">+4,10%</span></div>
-                <div class="loan-meta">5 000,00 zł · Zapada: 15.06.2026</div>
-                <div style="color:var(--success);font-size:0.75rem;">Odsetki: ≈ 51,25 zł</div>
-              </div>
+              <div id="deposits-list"></div>
               <button class="btn btn-gold btn-sm" style="margin-top:0.8rem;" data-testid="btn-open-deposit" onclick="openModal('open-deposit')">+ Otwórz lokatę</button>
             </div>
           </div>
