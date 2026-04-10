@@ -17,7 +17,7 @@ public class BaseTestClass {
     public WebDriver Starter(){
         driver = new ChromeDriver();
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));// Tutaj mówimy ze ma poczekać 5 sekund by znaleźć element na stronie (oczekiwanie globalne)
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(LOGIN);
         return driver;
     }
