@@ -14,6 +14,8 @@ public class LoginTest extends BaseTestClass {
     @Description("Sprawdzenie czy w ogóle aplikacja się uruchamia")
     public void SmokeRuneUpTest(){
         driver.get(LOGIN);
+        WebElement LoginPage = driver.findElement(By.id("page-login"));
+        Assert.assertTrue(LoginPage.isDisplayed());
 
 
     }
@@ -24,10 +26,13 @@ public class LoginTest extends BaseTestClass {
         driver.findElement(By.id("login-email")).sendKeys("belobelo@wp.pl");
         driver.findElement(By.id("login-password")).sendKeys("4444");
         driver.findElement(By.id("btn-login")).click();
+        WebElement error = driver.findElement(By.id("login-error"));
+        Assert.assertTrue(error.isDisplayed());
     }
 
 
     @Test
+    @Description("Logowanie z poprawnymi danymi — użytkownik podaje prawidłowy e-mail i hasło, oczekiwany wynik: przejście do pulpitu")
     public void RightLogin(){
         driver.findElement(By.id("login-email")).sendKeys("belobelo@wp.pl");
         driver.findElement(By.id("login-password")).sendKeys("147258");
