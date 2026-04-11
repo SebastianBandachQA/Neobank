@@ -114,7 +114,7 @@ function renderDashTransactions() {
         <div class="tx-sub">${new Date(t.date).toLocaleDateString('pl-PL')} · ${t.category}</div>
       </div>
       <div class="tx-amount ${t.type} ml-auto">
-        ${t.amount>0?'+':''}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
+        ${t.amount>0?'+':'-'}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
       </div>
     </div>`).join('');
 }
@@ -469,6 +469,39 @@ function doQuickTransfer() {
   showToast('Wybierz odbiorcę powyżej, aby wykonać przelew','info');
 }
 
+function submitExpressTransfer() {
+  const recipEl  = document.getElementById('te-recipient');
+  const amountEl = document.getElementById('te-amount');
+  const titleEl  = document.getElementById('te-title');
+  if (!recipEl?.value.trim()) { showToast('Podaj odbiorcę','error'); return; }
+  const amount = parseFloat(amountEl?.value);
+  if (!amount||amount<=0) { showToast('Podaj kwotę przelewu','error'); return; }
+  const total = amount + 10; // opłata SORBNET
+  changeBalance(-total);
+  addTransaction(`Przelew ekspresowy: ${recipEl.value.trim()} — ${titleEl?.value||''}`, -total, 'przelew');
+  recipEl.value=''; amountEl.value=''; if(titleEl) titleEl.value='';
+  showToast(`✅ Przelew ekspresowy ${fmt(amount)} wysłany (opłata: 10,00 zł)!`, 'success');
+}
+
+function submitForeignTransfer() {
+  const recipEl  = document.getElementById('tf-recipient');
+  const amountEl = document.getElementById('tf-amount');
+  const bicEl    = document.getElementById('tf-bic');
+  if (!recipEl?.value.trim()) { showToast('Podaj odbiorcę','error'); return; }
+  const amount = parseFloat(amountEl?.value);
+  if (!amount||amount<=0) { showToast('Podaj kwotę przelewu','error'); return; }
+  if (!bicEl?.value.trim()) { showToast('Podaj kod BIC/SWIFT','error'); return; }
+  const currency = document.getElementById('tf-currency')?.value || 'EUR';
+  const country  = document.getElementById('tf-country')?.value || '';
+  // przelicz na PLN (uproszczony kurs)
+  const rate = currency==='EUR'?4.30 : currency==='USD'?3.95 : currency==='GBP'?5.10 : currency==='CHF'?4.45 : 1;
+  const amountPLN = amount * rate;
+  changeBalance(-amountPLN);
+  addTransaction(`Przelew SWIFT: ${recipEl.value.trim()} (${country}) — ${currency}`, -amountPLN, 'przelew');
+  recipEl.value=''; amountEl.value=''; bicEl.value='';
+  showToast(`✅ Przelew SWIFT ${amount} ${currency} (≈ ${fmt(amountPLN)}) wysłany!`, 'success');
+}
+
 function submitBLIK() {
   const code = document.getElementById('blik-code').value.replace(/\s/g,'');
   const err  = document.getElementById('err-blik');
@@ -542,7 +575,7 @@ function renderHistory() {
       </td>
       <td><span class="badge badge-neutral">${t.category}</span></td>
       <td><span class="tx-amount ${t.type}">
-        ${t.amount>0?'+':''}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
+        ${t.amount>0?'+':'-'}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
       </span></td>
       <td><span class="badge ${STATUS_CLS[t.status]}">${STATUS_LBL[t.status]}</span></td>
       <td>
@@ -820,7 +853,7 @@ function doSearch(q) {
         <div style="color:var(--muted);font-size:0.75rem;">${t.date} · ${t.category}</div>
       </div>
       <div class="tx-amount ${t.type}" style="margin-left:auto;">
-        ${t.amount>0?'+':''}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
+        ${t.amount>0?'+':'-'}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
       </div>
     </div>`).join('');
 }

@@ -206,7 +206,7 @@ label {
   color: var(--muted);
   pointer-events: none;
 }
-.has-icon input { padding-left: 2.6rem; }
+.has-icon input { padding-left: 3.6rem !important; }
 
 input[type="text"],
 input[type="email"],
