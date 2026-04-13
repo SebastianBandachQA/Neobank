@@ -22,7 +22,7 @@ public class Helper {
 //            wait = new WebDriverWait(getChromeDriver(), 5);
 //        }
 //        return wait;
-    }
+
 
 
 
