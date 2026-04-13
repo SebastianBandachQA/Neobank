@@ -1,14 +1,7 @@
 package Smoke;
 
 import BaseTest.BaseTestClass;
-import Pages.Enums.Credentials;
-import Pages.Login.LoginPage;
-import helper.Helper;
 import io.qameta.allure.Description;
-import org.assertj.core.api.Assertions;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static Pages.Enums.Credentials.*;
@@ -42,7 +35,7 @@ public class LoginTest extends BaseTestClass {
     }
 
     @Test
-    @Description("Logowanie z błędnym hasłem — użytkownik podaje poprawny e-mail ale złe hasło, oczekiwany wynik: komunikat o błędzie")
+    @Description("Logowanie z błędnym hasłem — użytkownik podaje zły e-mail ale poprawne hasło, oczekiwany wynik: komunikat o błędzie")
     public void wrongLogin(){
         login.act()
                 .login(WRONG_LOGIN)
