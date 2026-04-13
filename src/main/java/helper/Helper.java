@@ -1,5 +1,7 @@
 package helper;
 
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 public class Helper {
 
     public static void pause() {
@@ -10,4 +12,18 @@ public class Helper {
 
         }
     }
+
+    /*
+    To niżej to fajny Wait. pomyśleć nad jego wdrożeniem
+     */
+
+//    public static WebDriverWait getWebDriverWait(){
+//        if(wait == null){
+//            wait = new WebDriverWait(getChromeDriver(), 5);
+//        }
+//        return wait;
+    }
+
+
+
 }
