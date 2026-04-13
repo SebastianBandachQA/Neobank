@@ -35,5 +35,6 @@ public class BaseTestClass {
     @AfterMethod(alwaysRun = true)
     public void close(){
         driver.quit();
+        DriverFactory.driver = null;// Zeruje Drivera
     }
 }

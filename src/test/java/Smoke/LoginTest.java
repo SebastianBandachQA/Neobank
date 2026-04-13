@@ -26,11 +26,19 @@ public class LoginTest extends BaseTestClass {
     @Test
     @Description("Sprawdzenie czy w ogóle aplikacja się uruchamia")
     public void SmokeRuneUpTest(){
-        WebElement LoginPage = driver.findElement(By.id("page-login"));
-        Helper.pause();
-        Assert.assertTrue(LoginPage.isDisplayed());
+        login.veryfi()
+                .loginPageisDisplayed();
 
 
+    }
+    @Test
+    @Description("Formularz logowania zawiera pole e-mail, hasło i przycisk submit")
+    public void VeryfiNames(){
+        login.veryfi()
+                .loginPageisDisplayed()
+                .emaillabelDisplayed()
+                .passwordLabelDispayed()
+                .loginbuttonDisplayed();
     }
 
     @Test
