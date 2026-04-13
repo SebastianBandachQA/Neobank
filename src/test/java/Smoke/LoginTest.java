@@ -1,6 +1,8 @@
 package Smoke;
 
 import BaseTest.BaseTestClass;
+import Pages.Enums.Credentials;
+import Pages.Login.LoginPage;
 import helper.Helper;
 import io.qameta.allure.Description;
 import org.assertj.core.api.Assertions;
@@ -14,10 +16,13 @@ przelwey, karty, kredyty, płatności, wyszukiwanie , ustawienia i wsparcie zrob
  */
 
 public class LoginTest extends BaseTestClass {
+
+    LoginPage login = LoginPage.getLoginPage();
+
     @Test
     @Description("Sprawdzenie czy w ogóle aplikacja się uruchamia")
     public void SmokeRuneUpTest(){
-        driver.get(LOGIN);
+//        driver.get(LOGIN);
         WebElement LoginPage = driver.findElement(By.id("page-login"));
         Helper.pause();
         Assert.assertTrue(LoginPage.isDisplayed());
@@ -28,9 +33,13 @@ public class LoginTest extends BaseTestClass {
     @Test
     @Description("Logowanie z błędnym hasłem — użytkownik podaje poprawny e-mail ale złe hasło, oczekiwany wynik: komunikat o błędzie")
     public void wrongLogin(){
-        driver.findElement(By.id("login-email")).sendKeys("belobelo@wp.pl");// to mogę sobie zrobić Data Providerem
-        driver.findElement(By.id("login-password")).sendKeys("4444");
-        driver.findElement(By.id("btn-login")).click();
+//        driver.findElement(By.id("login-email")).sendKeys("belobelo@wp.pl");// to mogę sobie zrobić Data Providerem
+//        driver.findElement(By.id("login-password")).sendKeys("4444");
+//        driver.findElement(By.id("btn-login")).click();
+        login.act()
+                .login(Credentials.WRONG_LOGIN)
+                .password(Credentials.PASSWORD)
+                .ButtonLoginClick();
         WebElement error = driver.findElement(By.id("login-error"));
         Helper.pause();
         Assert.assertTrue(error.isDisplayed());

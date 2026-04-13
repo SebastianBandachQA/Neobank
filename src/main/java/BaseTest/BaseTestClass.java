@@ -11,7 +11,7 @@ import java.time.Duration;
 public class BaseTestClass {
 
     protected static final String PREFIX = "file:///" + System.getProperty("user.dir") + "\\src\\web\\";
-    protected static final String LOGIN = PREFIX + "index.html";// i zmienić tu nazwę na START
+    public static final String START = PREFIX + "index.html";// i zmienić tu nazwę na START
     protected WebDriver driver;
 
     /*
@@ -24,7 +24,7 @@ public class BaseTestClass {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.get(LOGIN);// Zmienić tu nazwę na START
+        driver.get(START);// Zmienić tu nazwę na START
         return driver;
     }
 
