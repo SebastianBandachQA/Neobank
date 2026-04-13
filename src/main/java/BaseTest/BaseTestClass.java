@@ -1,6 +1,7 @@
 package BaseTest;
 
 import Pages.Login.LoginPage;
+import helper.DriverFactory;
 import helper.Helper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -22,7 +23,7 @@ public class BaseTestClass {
 
     @BeforeMethod
     public WebDriver Starter(){
-        driver = new ChromeDriver();
+        driver = DriverFactory.getChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(START);// Zmienić tu nazwę na START
