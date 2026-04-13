@@ -1,5 +1,6 @@
 package BaseTest;
 
+import Pages.Login.LoginPage;
 import helper.Helper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -27,6 +28,8 @@ public class BaseTestClass {
         driver.get(START);// Zmienić tu nazwę na START
         return driver;
     }
+    public LoginPage login = LoginPage.getLoginPage();
+
 
     @AfterMethod(alwaysRun = true)
     public void close(){
