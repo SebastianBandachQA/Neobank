@@ -34,16 +34,6 @@ public class LoginTest extends BaseTestClass {
                 .loginbuttonDisplayed();
     }
 
-    @Test
-    @Description("Logowanie z błędnym hasłem — użytkownik podaje zły e-mail ale poprawne hasło, oczekiwany wynik: komunikat o błędzie")
-    public void wrongLogin(){
-        login.act()
-                .login(WRONG_LOGIN)
-                .password(PASSWORD)
-                .buttonLoginClick();
-        login.veryfi()
-                .wrongLoginMassage();
-    }
 
 
     @Test

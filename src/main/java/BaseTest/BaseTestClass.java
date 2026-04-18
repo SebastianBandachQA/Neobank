@@ -1,5 +1,6 @@
 package BaseTest;
 
+import Pages.Desktop.DesktopPage;
 import Pages.Login.LoginPage;
 import helper.DriverFactory;
 import helper.Helper;
@@ -30,6 +31,7 @@ public class BaseTestClass {
         return driver;
     }
     public LoginPage login = LoginPage.getLoginPage();
+    public DesktopPage desktop = DesktopPage.getDesktopPage();
 
 
     @AfterMethod(alwaysRun = true)
