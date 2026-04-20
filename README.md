@@ -1,4 +1,3 @@
-[README (3).md](https://github.com/user-attachments/files/26898374/README.3.md)
 NeoBank
 
 Prywatny projekt portfolio — aplikacja bankowości internetowej wraz z frameworkiem testów automatycznych. Projekt rozwijany na bieżąco.
