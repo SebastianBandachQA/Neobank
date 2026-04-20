@@ -1,5 +1,120 @@
 NeoBank
 
+POLISH VERSION AVAILABLE BELOW
+
+Personal portfolio project — an online banking web app together with an automated testing framework. Actively developed.
+
+![Java](https://img.shields.io/badge/Java-24-orange)
+![Selenium](https://img.shields.io/badge/Selenium-4.41-green)
+![TestNG](https://img.shields.io/badge/TestNG-7.12-red)
+![Allure](https://img.shields.io/badge/Allure-2.33-yellow)
+![AssertJ](https://img.shields.io/badge/AssertJ-4.0-blueviolet)
+![Maven](https://img.shields.io/badge/Maven-3-blue)
+
+About
+
+I built both the banking app (frontend) and the test automation framework from scratch. The goal is to show not just that I test, but how I design tests — as a software product, not a pile of scripts.
+
+The repo reflects progress over time — commits show how I think, how I refactor, and what design decisions I make.
+
+The application
+
+NeoBank is a single-page banking app (vanilla JS, no frameworks) simulating a real customer experience. Modules:
+
+- Authentication — login with validation, 4-step registration (personal data, PESEL, contact, password)
+- Dashboard — balances, monthly expenses, category budgets, recent transactions, notifications
+- My accounts — Personal Premium, Savings, EUR currency account
+- Transfers — domestic, international, BLIK
+- Transaction history — sorting, filtering, pagination
+- Cards, Loans & Deposits, Payments with cart, Search, Settings, Support
+
+All interactive elements have `data-testid` attributes — the app was designed with automation in mind.
+
+Test framework
+
+Stack:
+
+| Layer | Technology | Version |
+|---|---|---|
+| Language | Java | 24 |
+| Test framework | TestNG | 7.12 |
+| UI automation | Selenium WebDriver | 4.41 |
+| Assertions | AssertJ + TestNG Assert | 4.0 |
+| Reporting | Allure | 2.33 |
+| Build tool | Maven | — |
+
+Architecture is built around design patterns:
+
+- Page Object Pattern with classic `driver.findElement()` instead of PageFactory. A conscious choice — lazy loading and fewer `StaleElementReferenceException` issues in Selenium 4+.
+- Fluent Interface with method chaining — tests read like sentences.
+- Act/Verify segregation — each page has two controllers: one for actions, one for assertions. A test shows what it does and what it checks at a glance.
+- Controller exposed through `BaseTestClass` and inherited by every test. No boilerplate in individual tests.
+- Enums for test data — no magic strings.
+
+Test example:
+
+```java
+@Test
+@Description("Logowanie z poprawnymi danymi — użytkownik podaje prawidłowy e-mail i hasło, oczekiwany wynik: przejście do pulpitu")
+public void RightLogin() {
+    login.act()
+            .login(CORRECT_LOGIN)
+            .password(PASSWORD)
+            .buttonLoginClick();
+    login.verify()
+            .desktopVisible();
+}
+```
+
+Roadmap
+
+Done:
+
+- Baseline framework: POM, Fluent, Act/Verify, Controller
+- Allure integration
+- Login smoke tests (happy path)
+
+Next up:
+
+- Negative login tests (field validation, bad credentials, email formatting)
+- Multi-step registration tests (PESEL validation, step flow, edge cases)
+- Transfer tests (domestic, international, BLIK)
+- Transaction history tests
+- Gradual assertion migration to AssertJ
+- Replace generic `Helper.pause()` with `WebDriverWait` where it matters
+
+Further ahead:
+
+- TestNG Data Providers — data-driven testing
+- Parallel execution (ThreadLocal WebDriver + DriverFactory refactor)
+- API testing module — Postman first, REST Assured long-term
+- GitHub Actions — PR pipeline
+- Allure report deployed to GitHub Pages
+
+## Running
+
+Application — open `src/web/index.html` in a browser. Login: any email and a password of at least 6 characters.
+
+Tests:
+
+```
+mvn clean test
+mvn allure:serve
+```
+
+Contact
+
+Sebastian Bandach — QA Automation Engineer
+
+LinkedIn: linkedin.com/in/sebastian-bandach
+
+[github.com/SebastianBandachQA](https://github.com/SebastianBandachQA)
+
+============================================================================================================================================================================================================================
+POLSKA WERSJA
+============================================================================================================================================================================================================================
+NeoBank
+
 Prywatny projekt portfolio — aplikacja bankowości internetowej wraz z frameworkiem testów automatycznych. Projekt rozwijany na bieżąco.
 
 ![Java](https://img.shields.io/badge/Java-24-orange)
@@ -105,4 +220,5 @@ mvn allure:serve
 Sebastian Bandach — QA Automation Engineer
 
 LinkedIn: linkedin.com/in/sebastian-bandach
+
 [github.com/SebastianBandachQA](https://github.com/SebastianBandachQA)
