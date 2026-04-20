@@ -47,7 +47,7 @@ Architecture is built around design patterns:
 
 - Page Object Pattern with classic `driver.findElement()` instead of PageFactory. A conscious choice — lazy loading and fewer `StaleElementReferenceException` issues in Selenium 4+.
 - Fluent Interface with method chaining — tests read like sentences.
-- Act/Verify segregation — each page has two controllers: one for actions, one for assertions. A test shows what it does and what it checks at a glance.
+- Act/Verify segregation — each page has two separate controllers: one for actions, one for assertions. Currently implemented on LoginPage; other pages are being added.
 - Controller exposed through `BaseTestClass` and inherited by every test. No boilerplate in individual tests.
 - Enums for test data — no magic strings.
 
@@ -70,12 +70,14 @@ Roadmap
 
 Done:
 
-- Baseline framework: POM, Fluent, Act/Verify, Controller
+- Baseline framework: POM, Fluent,
+- Act/Verify controllers for LoginPage
 - Allure integration
 - Login smoke tests (happy path)
 
 Next up:
 
+- Build Act/Verify controllers for remaining pages
 - Negative login tests (field validation, bad credentials, email formatting)
 - Multi-step registration tests (PESEL validation, step flow, edge cases)
 - Transfer tests (domestic, international, BLIK)
@@ -160,7 +162,7 @@ Architektura opiera się na wzorcach projektowych:
 
 - Page Object Pattern z klasycznym `driver.findElement()` zamiast PageFactory. Decyzja świadoma — lazy loading i mniejsza podatność na `StaleElementReferenceException` w Selenium 4+.
 - Fluent Interface z method chainingiem — testy czytają się jak zdania.
-- Act/Verify segregation — każda strona ma dwa kontrolery: jeden dla akcji, drugi dla asercji. Test od razu pokazuje co robi i co sprawdza.
+- Act/Verify segregation — każda strona ma dwa osobne kontrolery: jeden dla akcji, drugi dla asercji. Aktualnie zaimplementowane dla LoginPage; pozostałe strony są w trakcie dodawania.
 - Controller w BaseTestClass udostępniony wszystkim testom przez dziedziczenie. Zero boilerplate w pojedynczym teście.
 - Enumy dla danych testowych — bez magicznych stringów.
 
@@ -183,12 +185,14 @@ Roadmap
 
 Zrobione:
 
-- Baseline framework: POM, Fluent, Act/Verify, Controller
+- Baseline framework: POM, Fluent
+- Kontrolery Act/Verify dla LoginPage
 - Integracja z Allure
 - Smoke testy logowania (happy path)
 
 W planach na najbliższy czas:
 
+- Dodanie kontrolerów Act/Verify dla pozostałych stron
 - Negative testy logowania (walidacja pól, złe dane, formatowanie e-maila)
 - Testy rejestracji wieloetapowej (walidacja PESEL, przechodzenie kroków, edge cases)
 - Testy przelewów (krajowy, zagraniczny, BLIK)
