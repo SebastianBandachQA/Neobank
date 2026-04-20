@@ -103,5 +103,6 @@ mvn allure:serve
 ## Kontakt
 
 Sebastian Bandach — QA Automation Engineer
+
 LinkedIn: linkedin.com/in/sebastian-bandach
 [github.com/SebastianBandachQA](https://github.com/SebastianBandachQA)
