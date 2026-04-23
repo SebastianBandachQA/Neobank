@@ -6,8 +6,8 @@ import org.testng.Assert;
 
 import static helper.DriverFactory.driver;
 
-public class DesktopVeryfiController {
-    public DesktopVeryfiController insertAmmountModal(){
+public class DesktopVerifyController {
+    public DesktopVerifyController insertAmmountModal(){
         WebElement popapModal = driver.findElement(By.id("toast-container"));
         Assert.assertTrue(popapModal.isDisplayed());
         return this;

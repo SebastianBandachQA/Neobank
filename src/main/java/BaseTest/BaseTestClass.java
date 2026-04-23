@@ -3,7 +3,6 @@ package BaseTest;
 import Pages.Desktop.DesktopPage;
 import Pages.Login.LoginPage;
 import helper.DriverFactory;
-import helper.Helper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterMethod;
@@ -23,7 +22,7 @@ public class BaseTestClass {
      */
 
     @BeforeMethod
-    public WebDriver Starter(){
+    public WebDriver starter(){
         driver = DriverFactory.getChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));

@@ -5,7 +5,7 @@ import io.qameta.allure.Description;
 import org.testng.annotations.Test;
 
 import static Pages.Enums.Credentials.*;
-import static Pages.Enums.Credentials.CORECT_LOGIN;
+import static Pages.Enums.Credentials.CORRECT_LOGIN;
 import static Pages.Enums.Credentials.PASSWORD;
 
 /*
@@ -40,7 +40,7 @@ public class LoginTest extends BaseTestClass {
     @Description("Logowanie z poprawnymi danymi — użytkownik podaje prawidłowy e-mail i hasło, oczekiwany wynik: przejście do pulpitu")
     public void RightLogin(){
         login.act()
-                .login(CORECT_LOGIN)
+                .login(CORRECT_LOGIN)
                 .password(PASSWORD)
                 .buttonLoginClick();
         login.veryfi()
