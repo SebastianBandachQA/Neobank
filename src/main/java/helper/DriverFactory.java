@@ -16,25 +16,7 @@ public class DriverFactory {
     }
 
     public static WebDriver getChromeDriver(){
-
-        if(driver == null){
-            System.setProperty("webdriver.chrome.driver","C:\\chromedriver.exe");
             driver = new ChromeDriver();
-        }
-        return driver;
-    }
-    public static void resetDriver() {
-        if (driver != null) {
-            driver.quit();
-            driver = null;  //W razie "W" wywołujemy ją jako close() zamiast driver.quit() w BaseTestClass w @AfterMethod
-        }
-    }
-
-
-    public static WebDriverWait getWebDriverWait(){// ten wait jest całkiem spoko bo jest zrobiiony tak ze czeka az element się pokarze
-        if(wait == null){
-            wait = new WebDriverWait(getChromeDriver(), Duration.ofSeconds(5));
-        }
-        return wait;
+            return driver;
     }
 }
