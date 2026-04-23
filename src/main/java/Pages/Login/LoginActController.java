@@ -1,12 +1,12 @@
 package Pages.Login;
 
 import Pages.Enums.Credentials;
-import helper.Helper;
+import helper.Wait;
 import org.openqa.selenium.By;
 
 
 import static Pages.Enums.Credentials.*;
-import static Pages.Enums.Credentials.CORECT_LOGIN;
+import static Pages.Enums.Credentials.CORRECT_LOGIN;
 import static helper.DriverFactory.driver;
 
 
@@ -23,16 +23,16 @@ public class LoginActController {
     }
     public LoginActController buttonLoginClick (){
         driver.findElement(By.id("btn-login")).click();
-        Helper.pause();
+        Wait.pause();
         return this;
 
 
     }
     public LoginActController BundleCorrectLogin(Credentials credentials){
-        driver.findElement(By.id("login-email")).sendKeys(CORECT_LOGIN.toString());
+        driver.findElement(By.id("login-email")).sendKeys(CORRECT_LOGIN.toString());
         driver.findElement(By.id("login-password")).sendKeys(PASSWORD.toString());
         driver.findElement(By.id("btn-login")).click();
-        Helper.pause();
+        Wait.pause();
         return this;
 
 

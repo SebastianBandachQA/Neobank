@@ -2,7 +2,7 @@ package Pages.Enums;
 
 public enum  Credentials {
 
-    CORECT_LOGIN("anna@example.pl"), PASSWORD("Admin123!"), WRONG_LOGIN("anna2example.pl"), EMPTY("");
+    CORRECT_LOGIN("anna@example.pl"), PASSWORD("Admin123!"), WRONG_LOGIN("anna2example.pl"), EMPTY("");
 
     private String value;
 

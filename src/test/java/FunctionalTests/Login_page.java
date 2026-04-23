@@ -16,7 +16,7 @@ public class Login_page extends BaseTestClass {
                 .password(PASSWORD)
                 .buttonLoginClick();
         login.veryfi()
-                .wrongLoginMassage();
+                .wrongLoginMessage();
     }
 
     @Test
@@ -27,6 +27,6 @@ public class Login_page extends BaseTestClass {
                 .password(PASSWORD)
                 .buttonLoginClick();
         login.veryfi()
-                .wrongLoginMassage();
+                .wrongLoginMessage();
     }
 }

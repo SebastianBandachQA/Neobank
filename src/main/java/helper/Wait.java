@@ -2,7 +2,7 @@ package helper;
 
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class Helper {
+public class Wait {
 
     public static void pause() {
         try {
