@@ -62,5 +62,15 @@ public class DesktopActController {
         Wait.pause();
         return this;
     }
+    public DesktopActController quickAmount(String number){
+        WebElement amountField = driver.findElement(By.id("quick-amount"));
+        amountField.sendKeys(number);
+        return this;
+    }
+    public DesktopActController selectQuickTransferPerson(){
+        driver.findElement(By.cssSelector("#quick-contacts > div:nth-child(1)")).click();
+        Wait.pause();
+        return this;
+    }
 
 }

@@ -11,6 +11,9 @@ const state = {
   balance: 48320.50,
   mainBalance: 32450.50,
   savingsBalance: 15000.00,
+  eurBalance: 870.00,
+  eurRate: 4.30,
+  selectedQuickContact: null,
   cartItems: [],
   couponDiscount: 0,
   history: { page: 1, perPage: 8, sort: { col: 'date', dir: -1 }, filtered: [] },
@@ -65,20 +68,48 @@ function fmt(n) {
 function todayStr() { return new Date().toISOString().split('T')[0]; }
 
 /** Dodaje tx do TX_DATA i odświeża wszystkie widoki */
-function addTransaction(title, amount, category) {
-  TX_DATA.unshift({ date:todayStr(), title, category, amount, type:amount<0?'out':'in', status:'completed' });
+function addTransaction(title, amount, category, fromAccount, extra) {
+  const tx = {
+    date: todayStr(), title, category, amount,
+    type: amount<0?'out':'in',
+    status:'completed',
+    fromAccount: fromAccount || 'main',
+  };
+  if (extra) Object.assign(tx, extra);
+  TX_DATA.unshift(tx);
   state.history.filtered = [...TX_DATA];
   state.history.page = 1;
   renderHistory();
   renderDashTransactions();
 }
 
-/** Zmienia saldo i aktualizuje wyświetlane wartości */
-function changeBalance(delta) {
-  state.balance     += delta;
-  state.mainBalance += delta;
+/** Zwraca saldo wybranego konta w PLN (EUR przeliczane po kursie) */
+function getAccountBalancePLN(account) {
+  if (account === 'savings') return state.savingsBalance;
+  if (account === 'eur')     return state.eurBalance * state.eurRate;
+  return state.mainBalance;
+}
 
-  // stat card
+/** Waliduje czy dane konto ma wystarczające saldo na podany przelew w PLN */
+function hasSufficientFunds(account, amountPLN) {
+  return getAccountBalancePLN(account) >= amountPLN - 0.001;
+}
+
+/** Zmienia saldo wybranego konta (w PLN) i aktualizuje widoki */
+function changeBalance(delta, account) {
+  account = account || 'main';
+
+  if (account === 'savings') {
+    state.savingsBalance += delta;
+  } else if (account === 'eur') {
+    state.eurBalance += (delta / state.eurRate);
+  } else {
+    state.mainBalance += delta;
+  }
+  // Suma łączna wszystkich kont
+  state.balance = state.mainBalance + state.savingsBalance + (state.eurBalance * state.eurRate);
+
+  // KPI card na dashboardzie — suma łączna
   const statEl = document.getElementById('stat-total-balance');
   if (statEl) {
     statEl.querySelector('.stat-value').textContent = fmt(state.balance);
@@ -88,17 +119,35 @@ function changeBalance(delta) {
       'stat-change ' + (delta < 0 ? 'down' : 'up');
   }
 
-  // szczegóły konta
+  // Szczegóły konta w "Moje konta" (prawy panel)
   const balEl = document.getElementById('acc-balance');
-  if (balEl) balEl.textContent = fmt(state.mainBalance);
+  if (balEl) {
+    const shown = state.__detailsAccount || 'main';
+    balEl.textContent = shown === 'eur'
+      ? Number(state.eurBalance).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €'
+      : fmt(getAccountBalancePLN(shown));
+  }
 
-  // select w przelewie i koszyku
-  ['tr-from', 'cart-from-account'].forEach(id => {
-    const sel = document.getElementById(id);
-    if (sel && sel.options[0]) {
-      sel.options[0].text = 'Konto Osobiste Premium (' + fmt(state.mainBalance) + ')';
-    }
-  });
+  // Salda na 3 kartach w "Moje konta"
+  const mb = document.querySelector('[data-testid="bc-main-balance"]');
+  const sb = document.querySelector('[data-testid="bc-savings-balance"]');
+  const eb = document.querySelector('[data-testid="bc-eur-balance"]');
+  if (mb) mb.textContent = fmt(state.mainBalance);
+  if (sb) sb.textContent = fmt(state.savingsBalance);
+  if (eb) eb.textContent = Number(state.eurBalance).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+
+  // Selects (przelew + koszyk)
+  const trFrom = document.getElementById('tr-from');
+  if (trFrom) {
+    const opts = trFrom.options;
+    if (opts[0]) opts[0].text = 'Konto Osobiste Premium (' + fmt(state.mainBalance) + ')';
+    if (opts[1]) opts[1].text = 'Konto Oszczędnościowe (' + fmt(state.savingsBalance) + ')';
+    if (opts[2]) opts[2].text = 'Konto Walutowe EUR (' + Number(state.eurBalance).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €)';
+  }
+  const cartSel = document.getElementById('cart-from-account');
+  if (cartSel && cartSel.options[0]) {
+    cartSel.options[0].text = 'Konto Osobiste Premium (' + fmt(state.mainBalance) + ')';
+  }
 }
 
 /** Renderuje 4 ostatnie transakcje na dashboardzie */
@@ -371,12 +420,15 @@ function switchInner(group, tab, btn) {
    ACCOUNTS
 ══════════════════════════════════ */
 function showAccountDetails(type) {
-  const bals = { main:fmt(state.mainBalance), savings:fmt(state.savingsBalance), eur:'870,00 €' };
   const d = ACCOUNT_DETAILS[type]; if (!d) return;
+  state.__detailsAccount = type;
+  const bal = type==='eur'
+    ? Number(state.eurBalance).toLocaleString('pl-PL',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €'
+    : fmt(getAccountBalancePLN(type));
   document.getElementById('acc-detail-name').textContent = d.name;
   document.getElementById('acc-iban').innerHTML =
     `${d.iban} <button class="copy-btn" id="btn-copy-iban" data-testid="btn-copy-iban" onclick="copyIBAN()">📋</button>`;
-  document.getElementById('acc-balance').textContent = bals[type];
+  document.getElementById('acc-balance').textContent = bal;
   document.getElementById('acc-type').textContent    = d.type;
 }
 function copyIBAN() { showToast('Numer IBAN skopiowany!','success'); }
@@ -398,6 +450,8 @@ function submitTransfer(e) {
   const recipEl  = document.getElementById('tr-recipient');
   const amountEl = document.getElementById('tr-amount');
   const titleEl  = document.getElementById('tr-title');
+  const ibanEl   = document.getElementById('tr-iban');
+  const fromEl   = document.getElementById('tr-from');
   let ok = true;
 
   [recipEl, titleEl].forEach(el => {
@@ -417,12 +471,24 @@ function submitTransfer(e) {
 
   if (!ok) { showToast('Uzupełnij wszystkie wymagane pola','error'); return; }
 
+  // Walidacja wystarczającego salda
+  const fromAccount = fromEl ? fromEl.value : 'main';
+  if (!hasSufficientFunds(fromAccount, amount)) {
+    const available = fmt(getAccountBalancePLN(fromAccount));
+    const accName = fromAccount==='savings' ? 'Konto Oszczędnościowe'
+                  : fromAccount==='eur'     ? 'Konto Walutowe EUR'
+                  : 'Konto Osobiste Premium';
+    showInsufficientFundsModal(accName, available, fmt(amount));
+    return;
+  }
+
   const box = document.getElementById('transfer-confirm-box');
   box.style.display = 'flex';
   box.innerHTML = `
     <div style="width:100%;">
       ⚠ Potwierdzasz przelew <strong>${fmt(amount)}</strong>
       do <strong>${recipEl.value.trim()}</strong>?<br>
+      <span style="font-size:0.78rem;opacity:0.8;">Z konta: ${fromEl.options[fromEl.selectedIndex].text.split(' (')[0]}</span><br>
       <span style="font-size:0.78rem;opacity:0.8;">Tytuł: „${titleEl.value.trim()}"</span>
       <div style="margin-top:0.8rem;display:flex;gap:0.5rem;">
         <button class="btn btn-danger btn-sm" id="btn-tr-cancel" data-testid="btn-tr-cancel"
@@ -435,11 +501,20 @@ function submitTransfer(e) {
 
 function confirmTransfer() {
   const recip  = document.getElementById('tr-recipient').value.trim();
+  const iban   = document.getElementById('tr-iban').value.trim();
   const amount = parseFloat(document.getElementById('tr-amount').value);
   const title  = document.getElementById('tr-title').value.trim();
+  const fromAccount = document.getElementById('tr-from').value;
 
-  changeBalance(-amount);
-  addTransaction(`Przelew do: ${recip} — ${title}`, -amount, 'przelew');
+  // Ostateczny check (gdyby saldo zmieniło się w międzyczasie)
+  if (!hasSufficientFunds(fromAccount, amount)) {
+    showToast('Brak wystarczających środków na koncie!','error');
+    clearTransferForm();
+    return;
+  }
+
+  changeBalance(-amount, fromAccount);
+  addTransaction(`Przelew do: ${recip} — ${title}`, -amount, 'przelew', fromAccount, { iban, recipient: recip, ref: title });
   clearTransferForm();
   showToast(`✅ Przelew ${fmt(amount)} do ${recip} wysłany!`, 'success');
 }
@@ -453,20 +528,193 @@ function clearTransferForm() {
 }
 
 function quickTransfer(name, iban) {
-  showSection('transfers');
-  setTimeout(() => {
-    document.getElementById('tr-recipient').value = name;
-    document.getElementById('tr-iban').value = iban;
-    document.getElementById('tr-amount').focus();
-    const qa = document.getElementById('quick-amount').value;
-    if (qa) document.getElementById('tr-amount').value = qa;
-  }, 100);
+  // Podświetl wybrany kontakt
+  state.selectedQuickContact = { name, iban };
+  document.querySelectorAll('.qc-item').forEach(el => el.classList.remove('selected'));
+  const contacts = document.querySelectorAll('#quick-contacts .qc-item');
+  contacts.forEach(el => {
+    const txt = el.querySelector('.qc-name');
+    if (txt && (name.startsWith(txt.textContent.replace(' N.','').replace(' W.','').trim()) ||
+                txt.textContent.trim() === name.split(' ')[0] ||
+                (name==='Mama' && txt.textContent==='Mama') ||
+                (name.includes('Czynsz') && txt.textContent==='Czynsz'))) {
+      el.classList.add('selected');
+    }
+  });
+  showToast(`Wybrano odbiorcę: ${name}. Wpisz kwotę i kliknij „Wyślij przelew".`, 'info');
 }
 
 function doQuickTransfer() {
-  const a = document.getElementById('quick-amount').value;
-  if (!a||parseFloat(a)<=0) { showToast('Podaj kwotę przelewu','error'); return; }
-  showToast('Wybierz odbiorcę powyżej, aby wykonać przelew','info');
+  const amountEl = document.getElementById('quick-amount');
+  const amount = parseFloat(amountEl.value);
+
+  if (!amount || amount <= 0) {
+    showToast('Podaj kwotę przelewu', 'error');
+    return;
+  }
+  if (!state.selectedQuickContact) {
+    showToast('Wybierz odbiorcę klikając w kontakt powyżej', 'error');
+    return;
+  }
+
+  // Walidacja salda (szybki przelew zawsze z konta głównego)
+  const fromAccount = 'main';
+  if (!hasSufficientFunds(fromAccount, amount)) {
+    showInsufficientFundsModal('Konto Osobiste Premium',
+      fmt(getAccountBalancePLN(fromAccount)), fmt(amount));
+    return;
+  }
+
+  // Modal potwierdzenia
+  const { name, iban } = state.selectedQuickContact;
+  MODAL_CONFIGS['quick-transfer-confirm'] = {
+    title: 'Potwierdź szybki przelew',
+    sub: `Przelew z konta głównego`,
+    content: `
+      <div style="padding:0.5rem 0;">
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Odbiorca:</span>
+          <strong data-testid="modal-qt-recipient">${name}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Numer konta:</span>
+          <span style="font-family:monospace;font-size:0.8rem;">${iban}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Kwota:</span>
+          <strong style="color:var(--red);" data-testid="modal-qt-amount">${fmt(amount)}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;">
+          <span style="color:var(--muted);">Z konta:</span>
+          <span>Konto Osobiste Premium</span>
+        </div>
+      </div>`,
+    footer: `
+      <button class="btn btn-outline" onclick="closeModal()" data-testid="btn-qt-cancel">Anuluj</button>
+      <button class="btn btn-success" data-testid="btn-qt-confirm"
+        onclick="executeQuickTransfer(${amount})">✓ Potwierdź i wyślij</button>`
+  };
+  openModal('quick-transfer-confirm');
+}
+
+function executeQuickTransfer(amount) {
+  const { name, iban } = state.selectedQuickContact;
+  const fromAccount = 'main';
+
+  if (!hasSufficientFunds(fromAccount, amount)) {
+    closeModal();
+    showToast('Brak wystarczających środków!', 'error');
+    return;
+  }
+
+  changeBalance(-amount, fromAccount);
+  addTransaction(`Przelew szybki: ${name}`, -amount, 'przelew', fromAccount,
+    { iban, recipient: name, ref: 'Szybki przelew' });
+
+  // Reset
+  document.getElementById('quick-amount').value = '';
+  document.querySelectorAll('.qc-item').forEach(el => el.classList.remove('selected'));
+  state.selectedQuickContact = null;
+
+  closeModal();
+  showToast(`✅ Przelew ${fmt(amount)} do ${name} wysłany!`, 'success');
+}
+
+/** Modal brak środków */
+function showInsufficientFundsModal(accountName, available, requested) {
+  MODAL_CONFIGS['insufficient-funds'] = {
+    title: '⛔ Brak wystarczających środków',
+    sub: 'Przelew nie może zostać zrealizowany',
+    content: `
+      <div class="alert alert-danger" style="margin-bottom:0.8rem;">
+        Na wybranym koncie nie ma wystarczających środków do realizacji tego przelewu.
+      </div>
+      <div style="padding:0.5rem 0;">
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Konto:</span>
+          <strong>${accountName}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Dostępne saldo:</span>
+          <strong style="color:var(--green);" data-testid="modal-available-balance">${available}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;">
+          <span style="color:var(--muted);">Próba przelewu:</span>
+          <strong style="color:var(--red);" data-testid="modal-requested-amount">${requested}</strong>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:0.6rem;">
+        💡 Możesz zmienić konto źródłowe lub zmniejszyć kwotę przelewu.
+      </div>`,
+    footer: `<button class="btn btn-primary" onclick="closeModal()" data-testid="btn-insufficient-ok">Rozumiem</button>`
+  };
+  openModal('insufficient-funds');
+}
+
+/** Szczegóły transakcji w modalu */
+function showTxDetails(idx) {
+  const t = TX_DATA[idx];
+  if (!t) return;
+  const accName = t.fromAccount==='savings' ? 'Konto Oszczędnościowe'
+                : t.fromAccount==='eur'     ? 'Konto Walutowe EUR'
+                : 'Konto Osobiste Premium';
+  const dir = t.type==='in' ? 'Przychodząca' : 'Wychodząca';
+  const amountClr = t.type==='in' ? 'var(--green)' : 'var(--red)';
+  const sign = t.amount > 0 ? '+' : '-';
+
+  MODAL_CONFIGS['tx-details'] = {
+    title: 'Szczegóły transakcji',
+    sub: t.title,
+    content: `
+      <div style="padding:0.3rem 0;">
+        <div style="text-align:center;padding:1rem 0;margin-bottom:0.5rem;background:var(--bg);border-radius:10px;">
+          <div style="font-size:2rem;margin-bottom:0.3rem;">${TX_ICONS[t.category]||'💰'}</div>
+          <div style="font-size:1.6rem;font-weight:700;color:${amountClr};" data-testid="modal-tx-amount">
+            ${sign}${fmt(Math.abs(t.amount)).replace(' zł','')} zł
+          </div>
+          <div style="color:var(--muted);font-size:0.8rem;margin-top:0.2rem;">${dir}</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Data transakcji:</span>
+          <strong data-testid="modal-tx-date">${new Date(t.date).toLocaleDateString('pl-PL')}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Kategoria:</span>
+          <span class="badge badge-neutral">${t.category}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Status:</span>
+          <span class="badge ${STATUS_CLS[t.status]}">${STATUS_LBL[t.status]}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">${t.type==='in' ? 'Konto docelowe:' : 'Z konta:'}</span>
+          <span data-testid="modal-tx-account">${accName}</span>
+        </div>
+        ${t.recipient ? `
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Odbiorca:</span>
+          <strong>${t.recipient}</strong>
+        </div>` : ''}
+        ${t.iban ? `
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Numer konta:</span>
+          <span style="font-family:monospace;font-size:0.78rem;">${t.iban}</span>
+        </div>` : ''}
+        ${t.ref ? `
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">Tytuł:</span>
+          <span>${t.ref}</span>
+        </div>` : ''}
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;">
+          <span style="color:var(--muted);">ID transakcji:</span>
+          <span style="font-family:monospace;font-size:0.75rem;color:var(--muted);">TXN-${String(idx+1).padStart(8,'0')}</span>
+        </div>
+      </div>`,
+    footer: `
+      <button class="btn btn-outline" onclick="closeModal()" data-testid="btn-tx-close">Zamknij</button>
+      <button class="btn btn-primary" onclick="closeModal(); showToast('Potwierdzenie wysłane na e-mail','success')" data-testid="btn-tx-email">📧 Wyślij potwierdzenie</button>`
+  };
+  openModal('tx-details');
 }
 
 function submitExpressTransfer() {
@@ -477,8 +725,12 @@ function submitExpressTransfer() {
   const amount = parseFloat(amountEl?.value);
   if (!amount||amount<=0) { showToast('Podaj kwotę przelewu','error'); return; }
   const total = amount + 10; // opłata SORBNET
-  changeBalance(-total);
-  addTransaction(`Przelew ekspresowy: ${recipEl.value.trim()} — ${titleEl?.value||''}`, -total, 'przelew');
+  if (!hasSufficientFunds('main', total)) {
+    showInsufficientFundsModal('Konto Osobiste Premium', fmt(state.mainBalance), fmt(total));
+    return;
+  }
+  changeBalance(-total, 'main');
+  addTransaction(`Przelew ekspresowy: ${recipEl.value.trim()} — ${titleEl?.value||''}`, -total, 'przelew', 'main', { recipient: recipEl.value.trim(), ref: titleEl?.value||'' });
   recipEl.value=''; amountEl.value=''; if(titleEl) titleEl.value='';
   showToast(`✅ Przelew ekspresowy ${fmt(amount)} wysłany (opłata: 10,00 zł)!`, 'success');
 }
@@ -493,11 +745,14 @@ function submitForeignTransfer() {
   if (!bicEl?.value.trim()) { showToast('Podaj kod BIC/SWIFT','error'); return; }
   const currency = document.getElementById('tf-currency')?.value || 'EUR';
   const country  = document.getElementById('tf-country')?.value || '';
-  // przelicz na PLN (uproszczony kurs)
   const rate = currency==='EUR'?4.30 : currency==='USD'?3.95 : currency==='GBP'?5.10 : currency==='CHF'?4.45 : 1;
   const amountPLN = amount * rate;
-  changeBalance(-amountPLN);
-  addTransaction(`Przelew SWIFT: ${recipEl.value.trim()} (${country}) — ${currency}`, -amountPLN, 'przelew');
+  if (!hasSufficientFunds('main', amountPLN)) {
+    showInsufficientFundsModal('Konto Osobiste Premium', fmt(state.mainBalance), fmt(amountPLN));
+    return;
+  }
+  changeBalance(-amountPLN, 'main');
+  addTransaction(`Przelew SWIFT: ${recipEl.value.trim()} (${country}) — ${currency}`, -amountPLN, 'przelew', 'main', { recipient: recipEl.value.trim(), ref: `SWIFT ${currency}` });
   recipEl.value=''; amountEl.value=''; bicEl.value='';
   showToast(`✅ Przelew SWIFT ${amount} ${currency} (≈ ${fmt(amountPLN)}) wysłany!`, 'success');
 }
@@ -508,7 +763,14 @@ function submitBLIK() {
   if (!/^\d{6}$/.test(code)) { err.classList.add('show'); return; }
   err.classList.remove('show');
   const amount = parseFloat(document.getElementById('blik-amount').value)||0;
-  if (amount>0) { changeBalance(-amount); addTransaction('Płatność BLIK', -amount, 'karta'); }
+  if (amount>0) {
+    if (!hasSufficientFunds('main', amount)) {
+      showInsufficientFundsModal('Konto Osobiste Premium', fmt(state.mainBalance), fmt(amount));
+      return;
+    }
+    changeBalance(-amount, 'main');
+    addTransaction('Płatność BLIK', -amount, 'karta', 'main', { ref: 'BLIK '+document.getElementById('blik-code').value });
+  }
   showToast('Płatność BLIK zrealizowana!','success');
 }
 
@@ -563,8 +825,8 @@ function renderHistory() {
   const start=(h.page-1)*h.perPage;
   const page=h.filtered.slice(start,start+h.perPage);
 
-  document.getElementById('history-body').innerHTML = page.map(t=>`
-    <tr data-testid="tx-row" data-amount="${t.amount}" data-type="${t.type}">
+  document.getElementById('history-body').innerHTML = page.map((t,i)=>`
+    <tr data-testid="tx-row" data-amount="${t.amount}" data-type="${t.type}" data-tx-idx="${start+i}">
       <td>${new Date(t.date).toLocaleDateString('pl-PL')}</td>
       <td>
         <div class="tx-row" style="padding:0;">
@@ -580,7 +842,7 @@ function renderHistory() {
       <td><span class="badge ${STATUS_CLS[t.status]}">${STATUS_LBL[t.status]}</span></td>
       <td>
         <button class="btn btn-ghost btn-sm" data-testid="btn-tx-details"
-          onclick="showToast('Szczegóły: ${t.title.replace(/'/g,'`')}','info')">Szczegóły</button>
+          onclick="showTxDetails(${start+i})">Szczegóły</button>
       </td>
     </tr>`).join('');
 
@@ -712,8 +974,8 @@ function submitLoanApplication() {
 
   // Kredyt = wpływ na konto
   if (loanAmount>0) {
-    changeBalance(loanAmount);
-    addTransaction(`Kredyt ${purpose} — wypłata`, loanAmount, 'kredyt');
+    changeBalance(loanAmount, 'main');
+    addTransaction(`Kredyt ${purpose} — wypłata`, loanAmount, 'kredyt', 'main');
   }
 
   closeModal();
@@ -732,6 +994,11 @@ function submitDeposit() {
     document.getElementById('err-dep-amount').style.display='block';
     amountEl?.classList.add('is-invalid');
     showToast('Minimalna kwota lokaty to 1 000 zł','error'); return;
+  }
+  if (!hasSufficientFunds('main', amount)) {
+    closeModal();
+    showInsufficientFundsModal('Konto Osobiste Premium', fmt(state.mainBalance), fmt(amount));
+    return;
   }
   document.getElementById('err-dep-amount').style.display='none';
   amountEl?.classList.remove('is-invalid');
@@ -758,8 +1025,8 @@ function submitDeposit() {
   });
 
   // Środki zablokowane — odejmij z salda
-  changeBalance(-amount);
-  addTransaction(`Lokata otwarta: ${LABELS[typeVal]} ${rate}%`, -amount, 'lokata');
+  changeBalance(-amount, 'main');
+  addTransaction(`Lokata otwarta: ${LABELS[typeVal]} ${rate}%`, -amount, 'lokata', 'main');
 
   closeModal();
   renderDeposits();
@@ -797,10 +1064,15 @@ function payCart() {
   if (!state.cartItems.length) return;
   const total = state.cartItems.reduce((s,i)=>s+i.amount, 0);
 
+  if (!hasSufficientFunds('main', total)) {
+    showInsufficientFundsModal('Konto Osobiste Premium', fmt(state.mainBalance), fmt(total));
+    return;
+  }
+
   // Każdy rachunek = osobna transakcja + odjęcie z salda
   state.cartItems.forEach(item => {
-    changeBalance(-item.amount);
-    addTransaction(`Płatność: ${item.name}`, -item.amount, 'rachunek');
+    changeBalance(-item.amount, 'main');
+    addTransaction(`Płatność: ${item.name}`, -item.amount, 'rachunek', 'main', { recipient: item.name });
   });
 
   showToast(`✅ Opłacono ${state.cartItems.length} rachunki · Łącznie: ${fmt(total)}`,'success');
@@ -950,4 +1222,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   calcLoan();
   updateCart();
+  // Sync initial balance displays
+  changeBalance(0, 'main');
 });
