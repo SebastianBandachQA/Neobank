@@ -4,7 +4,7 @@ POLISH VERSION AVAILABLE BELOW
 
 Personal portfolio project — an online banking web app together with an automated testing framework. Actively developed.
 
-![Java](https://img.shields.io/badge/Java-24-orange)
+![Java](https://img.shields.io/badge/Java-17-orange)
 ![Selenium](https://img.shields.io/badge/Selenium-4.41-green)
 ![TestNG](https://img.shields.io/badge/TestNG-7.12-red)
 ![Allure](https://img.shields.io/badge/Allure-2.33-yellow)
@@ -36,7 +36,7 @@ Stack:
 
 | Layer | Technology | Version |
 |---|---|---|
-| Language | Java | 24 |
+| Language | Java | 17 |
 | Test framework | TestNG | 7.12 |
 | UI automation | Selenium WebDriver | 4.41 |
 | Assertions | AssertJ + TestNG Assert | 4.0 |
@@ -119,7 +119,7 @@ NeoBank
 
 Prywatny projekt portfolio — aplikacja bankowości internetowej wraz z frameworkiem testów automatycznych. Projekt rozwijany na bieżąco.
 
-![Java](https://img.shields.io/badge/Java-24-orange)
+![Java](https://img.shields.io/badge/Java-17-orange)
 ![Selenium](https://img.shields.io/badge/Selenium-4.41-green)
 ![TestNG](https://img.shields.io/badge/TestNG-7.12-red)
 ![Allure](https://img.shields.io/badge/Allure-2.33-yellow)
@@ -151,7 +151,7 @@ Stack:
 
 | Warstwa | Technologia | Wersja |
 |---|---|---|
-| Język | Java | 24 |
+| Język | Java | 17 |
 | Framework testowy | TestNG | 7.12 |
 | UI Automation | Selenium WebDriver | 4.41 |
 | Asercje | AssertJ + TestNG Assert | 4.0 |
