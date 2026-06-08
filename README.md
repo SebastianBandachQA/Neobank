@@ -189,6 +189,7 @@ Zrobione:
 - Kontrolery Act/Verify dla LoginPage
 - Integracja z Allure
 - Smoke testy logowania (happy path)
+- Wprowadzenie `WebDriverWait` zamiast ogólnego `Helper.pause()`
 
 W planach na najbliższy czas:
 
@@ -198,7 +199,6 @@ W planach na najbliższy czas:
 - Testy przelewów (krajowy, zagraniczny, BLIK)
 - Testy historii transakcji
 - Stopniowa migracja asercji na AssertJ
-- Wprowadzenie `WebDriverWait` zamiast ogólnego `Helper.pause()`
 
 Dalej:
 
