@@ -74,6 +74,8 @@ Done:
 - Act/Verify controllers for LoginPage
 - Allure integration
 - Login smoke tests (happy path)
+- - Replace generic `Helper.pause()` with `WebDriverWait` where it matters
+
 
 Next up:
 
@@ -83,7 +85,6 @@ Next up:
 - Transfer tests (domestic, international, BLIK)
 - Transaction history tests
 - Gradual assertion migration to AssertJ
-- Replace generic `Helper.pause()` with `WebDriverWait` where it matters
 
 Further ahead:
 
