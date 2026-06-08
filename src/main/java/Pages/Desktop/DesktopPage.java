@@ -2,18 +2,18 @@ package Pages.Desktop;
 
 public class DesktopPage {
     private DesktopActController act;
-    private DesktopVerifyController veryfi;
+    private DesktopVerifyController verify;
 
     public DesktopActController act(){
         return act;
     }
 
-    public DesktopVerifyController veryfi(){
-        return veryfi;
+    public DesktopVerifyController verify(){
+        return verify;
     }
 
-    public DesktopPage(DesktopVerifyController veryfi, DesktopActController act) {
-        this.veryfi = veryfi;
+    public DesktopPage(DesktopVerifyController verify, DesktopActController act) {
+        this.verify = verify;
         this.act = act;
     }
     public static DesktopPage getDesktopPage(){

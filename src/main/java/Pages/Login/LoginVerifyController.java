@@ -8,24 +8,24 @@ import static helper.DriverFactory.driver;
 
 public class LoginVerifyController {
 
-    public LoginVerifyController loginPageisDisplayed(){
-        WebElement LoginPage = driver.findElement(By.id("page-login"));
+    public LoginVerifyController loginPageIsDisplayed(){
+        WebElement loginPage = driver.findElement(By.id("page-login"));
         Wait.pause();
-        Assert.assertTrue(LoginPage.isDisplayed());
+        Assert.assertTrue(loginPage.isDisplayed());
         return this;
     }
-    public LoginVerifyController emaillabelDisplayed(){
+    public LoginVerifyController emailLabelDisplayed(){
         WebElement emailLabel = driver.findElement(By.cssSelector("#login-form > div:nth-child(1) > label"));
         Assert.assertTrue(emailLabel.isDisplayed());
         return this;
 
     }
-    public LoginVerifyController passwordLabelDispayed(){
+    public LoginVerifyController passwordLabelDisplayed(){
         WebElement passwordLabel = driver.findElement(By.cssSelector("#login-form > div:nth-child(2) > label"));
         Assert.assertTrue(passwordLabel.isDisplayed());
         return this;
     }
-    public LoginVerifyController loginbuttonDisplayed(){
+    public LoginVerifyController loginButtonDisplayed(){
         WebElement buttonLogin = driver.findElement(By.id("btn-login"));
         Assert.assertTrue(buttonLogin.isDisplayed());
         return this;

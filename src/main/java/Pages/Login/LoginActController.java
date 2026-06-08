@@ -28,7 +28,7 @@ public class LoginActController {
 
 
     }
-    public LoginActController BundleCorrectLogin(Credentials credentials){
+    public LoginActController bundleCorrectLogin(Credentials credentials){
         driver.findElement(By.id("login-email")).sendKeys(CORRECT_LOGIN.toString());
         driver.findElement(By.id("login-password")).sendKeys(PASSWORD.toString());
         driver.findElement(By.id("btn-login")).click();
