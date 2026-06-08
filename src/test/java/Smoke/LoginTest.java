@@ -18,32 +18,32 @@ public class LoginTest extends BaseTestClass {
 
     @Test
     @Description("Sprawdzenie czy w ogóle aplikacja się uruchamia")
-    public void SmokeRuneUpTest(){
-        login.veryfi()
-                .loginPageisDisplayed();
+    public void smokeRunUpTest(){
+        login.verify()
+                .loginPageIsDisplayed();
 
 
     }
     @Test
     @Description("Formularz logowania zawiera pole e-mail, hasło i przycisk submit")
-    public void VeryfiNames(){
-        login.veryfi()
-                .loginPageisDisplayed()
-                .emaillabelDisplayed()
-                .passwordLabelDispayed()
-                .loginbuttonDisplayed();
+    public void verifyNames(){
+        login.verify()
+                .loginPageIsDisplayed()
+                .emailLabelDisplayed()
+                .passwordLabelDisplayed()
+                .loginButtonDisplayed();
     }
 
 
 
     @Test
     @Description("Logowanie z poprawnymi danymi — użytkownik podaje prawidłowy e-mail i hasło, oczekiwany wynik: przejście do pulpitu")
-    public void RightLogin(){
+    public void rightLogin(){
         login.act()
                 .login(CORRECT_LOGIN)
                 .password(PASSWORD)
                 .buttonLoginClick();
-        login.veryfi()
+        login.verify()
                 .desktopVisible();
 
     }

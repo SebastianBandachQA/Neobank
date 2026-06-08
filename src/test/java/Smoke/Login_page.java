@@ -1,4 +1,4 @@
-package FunctionalTests;
+package Smoke;
 
 import BaseTest.BaseTestClass;
 import io.qameta.allure.Description;
@@ -15,7 +15,7 @@ public class Login_page extends BaseTestClass {
                 .login(WRONG_LOGIN)
                 .password(PASSWORD)
                 .buttonLoginClick();
-        login.veryfi()
+        login.verify()
                 .wrongLoginMessage();
     }
 
@@ -26,7 +26,7 @@ public class Login_page extends BaseTestClass {
                 .login(EMPTY)
                 .password(PASSWORD)
                 .buttonLoginClick();
-        login.veryfi()
+        login.verify()
                 .wrongLoginMessage();
     }
 }

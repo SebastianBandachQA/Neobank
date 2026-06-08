@@ -13,7 +13,7 @@ import java.time.Duration;
 public class BaseTestClass {
 
     protected static final String PREFIX = "file:///" + System.getProperty("user.dir") + "\\src\\web\\";
-    public static final String START = PREFIX + "index.html";// i zmienić tu nazwę na START
+    public static final String START = PREFIX + "index.html";
     protected WebDriver driver;
 
     /*
@@ -26,7 +26,7 @@ public class BaseTestClass {
         driver = DriverFactory.getChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.get(START);// Zmienić tu nazwę na START
+        driver.get(START);
         return driver;
     }
     public LoginPage login = LoginPage.getLoginPage();

@@ -12,12 +12,12 @@ public class Validate extends BaseTestClass {
 
     @Test
     @Description("Funkcja formatująca kwotę zwraca 48 320,50 zł dla wartości 48320.50")
-    public void rightReturnAmmount(){
+    public void rightReturnAmount(){
         login.act()
                 .login(CORRECT_LOGIN)
                 .password(PASSWORD)
                 .buttonLoginClick();
-        login.veryfi()
+        login.verify()
                 .desktopVisible();
 
     }

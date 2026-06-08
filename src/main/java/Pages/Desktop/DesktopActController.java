@@ -6,61 +6,54 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import static helper.DriverFactory.driver;
-//Muszę pododawać switch to do tych wszystkich modali z belki bocznej
 
 public class DesktopActController {
-    public DesktopActController quickTransferDesktopButton(){
+    public void quickTransferDesktopButton(){
         WebElement quickTransferDesktop = driver.findElement(By.id("btn-quick-send"));
         quickTransferDesktop.click();
         Wait.pause();
-        return this;
+
     }
-    public DesktopActController switchToMyAccounts(){
+    public void switchToMyAccounts(){
         WebElement myAccountsButton = driver.findElement(By.id("nav-accounts"));
         myAccountsButton.click();
         Wait.pause();
-        return this;
     }
-    public DesktopActController switchToTransfers(){
+    public void switchToTransfers(){
         driver.findElement(By.id("nav-transfers")).click();
         Wait.pause();
-        return this;
-    }
-    public DesktopActController switchToHistory(){
-        driver.findElement(By.id("nav-history")).click();
-        Wait.pause();
-        return this;
-    }
-    public DesktopActController switchToCards(){
-        driver.findElement(By.id("nav-cards")).click();
-        Wait.pause();
-        return this;
 
     }
-    public DesktopActController switchToLoans() {
+    public void switchToHistory(){
+        driver.findElement(By.id("nav-history")).click();
+        Wait.pause();
+    }
+    public void switchToCards(){
+        driver.findElement(By.id("nav-cards")).click();
+        Wait.pause();
+
+    }
+    public void switchToLoans() {
         driver.findElement(By.id("nav-loans")).click();
         Wait.pause();
-        return this;
     }
-    public DesktopActController switchToPayments(){
+    public void switchToPayments(){
         driver.findElement(By.id("nav-payments")).click();
         Wait.pause();
-        return this;
     }
-    public DesktopActController switchToSearch(){
+    public void switchToSearch(){
         driver.findElement(By.id("nav-search")).click();
         Wait.pause();
-        return this;
     }
-    public DesktopActController switchToSettings(){
+    public void switchToSettings(){
         driver.findElement(By.id("nav-settings")).click();
         Wait.pause();
-        return this;
+
     }
-    public DesktopActController switchToSupport(){
+    public void switchToSupport(){
         driver.findElement(By.id("nav-support")).click();
         Wait.pause();
-        return this;
+
     }
     public DesktopActController quickAmount(String number){
         WebElement amountField = driver.findElement(By.id("quick-amount"));
