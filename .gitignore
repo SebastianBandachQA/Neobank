@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Private notes
+notes/
+notatki/
+*.notes.md
+TODO-private.md
+private-notes.md
